@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lista de prețuri – Haine second hand en-gros</title>
+  <style>
+    :root {
+      --black: #111111;
+      --gold: #d8a84f;
+      --gold-dark: #b8892f;
+      --paper: #fffaf0;
+      --light: #f7f4ee;
+      --text: #1a1a1a;
+      --muted: #666666;
+      --border: #e8e1d2;
+      --shadow: 0 10px 28px rgba(0,0,0,.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #ffffff 0%, #f7f4ee 100%);
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .hero {
+      background: radial-gradient(circle at top left, #3b2a11, var(--black) 55%);
+      color: #ffffff;
+      border-radius: 22px;
+      padding: 30px 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      top: -60px;
+      width: 220px;
+      height: 220px;
+      background: rgba(216,168,79,.18);
+      border-radius: 50%;
+    }
+
+    .brand {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 46px);
+      letter-spacing: 1.5px;
+      line-height: 1.05;
+    }
+
+    .brand-subtitle {
+      margin: 10px 0 0;
+      color: var(--gold);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .badge {
+      border: 1px solid rgba(216,168,79,.5);
+      color: var(--gold);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      background: rgba(255,255,255,.06);
+      white-space: nowrap;
+    }
+
+    .notice {
+      margin: 18px 0;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--gold);
+      border-radius: 16px;
+      padding: 16px 18px;
+      color: #2b2b2b;
+      line-height: 1.45;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+
+    .pdf-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--black);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 14px 18px;
+      border-radius: 13px;
+      font-weight: 800;
+      box-shadow: 0 5px 14px rgba(0,0,0,.18);
+      transition: transform .15s ease, background .15s ease;
+    }
+
+    .pdf-button:hover {
+      background: #2a2a2a;
+      transform: translateY(-1px);
+    }
+
+    .search-wrap {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 14px 16px;
+      font-size: 16px;
+      outline: none;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    }
+
+    .search:focus { border-color: var(--gold); }
+
+    .table-card {
+      background: #ffffff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--black);
+      color: var(--gold);
+    }
+
+    th {
+      text-align: left;
+      padding: 15px 14px;
+      font-size: 14px;
+      letter-spacing: .3px;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #eeeeee;
+      vertical-align: top;
+      line-height: 1.35;
+      font-size: 14px;
+    }
+
+    tbody tr:hover { background: #fff8e9; }
+
+    .product-name {
+      font-weight: 800;
+      color: #111111;
+    }
+
+    .price {
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .no-results {
+      display: none;
+      margin: 16px 0;
+      padding: 16px;
+      border-radius: 14px;
+      background: #fff4d8;
+      border: 1px solid #efd391;
+      font-weight: 700;
+    }
+
+    .simple-footer {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 16px;
+    }
+
+    @media (max-width: 760px) {
+      .page { padding: 10px; }
+
+      .hero {
+        border-radius: 18px;
+        padding: 22px 18px;
+      }
+
+      .brand { display: block; }
+
+      .badge {
+        display: inline-block;
+        margin-top: 14px;
+      }
+
+      .notice { font-size: 14px; }
+
+      .actions { display: block; }
+
+      .pdf-button {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 12px;
+      }
+
+      .search-wrap { min-width: 100%; }
+
+      .table-card {
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      table, thead, tbody, th, td, tr { display: block; }
+
+      thead { display: none; }
+
+      tbody tr {
+        background: #ffffff;
+        margin: 0 0 13px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 5px 16px rgba(0,0,0,.08);
+        overflow: hidden;
+      }
+
+      tbody tr:hover { background: #ffffff; }
+
+      td {
+        border-bottom: 1px solid #eeeeee;
+        padding: 10px 14px;
+        font-size: 15px;
+      }
+
+      td:last-child { border-bottom: 0; }
+
+      td::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 4px;
+        color: var(--gold-dark);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        font-weight: 900;
+      }
+
+      .product-name {
+        background: #111111;
+        color: #ffffff;
+        font-size: 17px;
+      }
+
+      .product-name::before { color: var(--gold); }
+
+      .price { font-size: 16px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="brand">
+        <div>
+          <h1 class="brand-title">Listă de prețuri</h1>
+          <p class="brand-subtitle">Haine second hand en-gros</p>
+        </div>
+        <div class="badge">Prețuri actualizate</div>
+      </div>
+    </section>
+
+    <section class="notice">
+      Lista de prețuri se actualizează periodic. Prețurile sunt informative, iar stocul și prețurile pot suferi modificări.
+      <br><strong>Ultima actualizare:</strong> 25.06.2026
+    </section>
+
+    <section class="actions">
+      <!-- AICI SE ADAUGĂ LINKUL PDF: înlocuiește href="#" cu linkul PDF-ului -->
+      <a class="pdf-button" href="#" target="_blank" rel="noopener">📄 Descarcă lista de prețuri (PDF)</a>
+
+      <div class="search-wrap">
+        <input id="searchInput" class="search" type="search" placeholder="🔍 Caută produs sau descriere...">
+      </div>
+    </section>
+
+    <div id="noResults" class="no-results">Nu există rezultate pentru această căutare.</div>
+
+    <section class="table-card">
+      <table aria-label="Lista de prețuri haine second hand en-gros">
+        <thead>
+          <tr>
+            <th>Produs</th>
+            <th>Descriere</th>
+            <th>Kg</th>
+            <th>Preț/balot</th>
+            <th>Preț/kg</th>
+          </tr>
+        </thead>
+        <tbody id="priceTable">
+          <tr class="product-row" data-search="tricouri bărbați xxl tricouri bărbați din bumbac, mărime mare, la baza gâtului">
+            <td data-label="Produs" class="product-name">Tricouri bărbați XXL</td>
+            <td data-label="Descriere">Tricouri bărbați din bumbac, mărime mare, la baza gâtului</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">1.000 RON</td>
+            <td data-label="Preț/kg" class="price">22 RON</td>
+          </tr>
+          <tr class="product-row" data-search="tricouri mix - bărbați tricouri bărbați din amestec de materiale (bumbac și sintetic)">
+            <td data-label="Produs" class="product-name">Tricouri mix - bărbați</td>
+            <td data-label="Descriere">Tricouri bărbați din amestec de materiale (bumbac și sintetic)</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">850 RON</td>
+            <td data-label="Preț/kg" class="price">19 RON</td>
+          </tr>
+          <tr class="product-row" data-search="tricou golf bărbați tricou polo bărbați din bumbac, cu guler și trei nasturi">
+            <td data-label="Produs" class="product-name">Tricou Golf bărbați</td>
+            <td data-label="Descriere">Tricou polo bărbați din bumbac, cu guler și trei nasturi</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">790 RON</td>
+            <td data-label="Preț/kg" class="price">18 RON</td>
+          </tr>
+          <tr class="product-row" data-search="tricou damă xxl tricou de damă, mărime mare, din bumbac">
+            <td data-label="Produs" class="product-name">Tricou damă XXL</td>
+            <td data-label="Descriere">Tricou de damă, mărime mare, din bumbac</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">650 RON</td>
+            <td data-label="Preț/kg" class="price">14 RON</td>
+          </tr>
+          <tr class="product-row" data-search="tricou damă normal tricou de damă, mărime normală/mică, bumbac">
+            <td data-label="Produs" class="product-name">Tricou damă normal</td>
+            <td data-label="Descriere">Tricou de damă, mărime normală/mică, bumbac</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">650 RON</td>
+            <td data-label="Preț/kg" class="price">14 RON</td>
+          </tr>
+          <tr class="product-row" data-search="tricou bărbați l/s tricouri bărbați din bumbac, cu mânecă lungă">
+            <td data-label="Produs" class="product-name">Tricou bărbați L/S</td>
+            <td data-label="Descriere">Tricouri bărbați din bumbac, cu mânecă lungă</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">690 RON</td>
+            <td data-label="Preț/kg" class="price">15 RON</td>
+          </tr>
+          <tr class="product-row" data-search="șort din bumbac pantaloni scurți din bumbac, damă și bărbați">
+            <td data-label="Produs" class="product-name">Șort din bumbac</td>
+            <td data-label="Descriere">Pantaloni scurți din bumbac, damă și bărbați</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">700 RON</td>
+            <td data-label="Preț/kg" class="price">16 RON</td>
+          </tr>
+          <tr class="product-row" data-search="șort xxl pantaloni scurți bărbați, mărime mare, din diverse materiale">
+            <td data-label="Produs" class="product-name">Șort XXL</td>
+            <td data-label="Descriere">Pantaloni scurți bărbați, mărime mare, din diverse materiale</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">650 RON</td>
+            <td data-label="Preț/kg" class="price">14 RON</td>
+          </tr>
+          <tr class="product-row" data-search="tricou damă l/s tricou de damă din bumbac, cu mânecă lungă">
+            <td data-label="Produs" class="product-name">Tricou damă L/S</td>
+            <td data-label="Descriere">Tricou de damă din bumbac, cu mânecă lungă</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">640 RON</td>
+            <td data-label="Preț/kg" class="price">14 RON</td>
+          </tr>
+          <tr class="product-row" data-search="pantaloni din velur pantaloni de damă din velur (catifea plușată)">
+            <td data-label="Produs" class="product-name">Pantaloni din velur</td>
+            <td data-label="Descriere">Pantaloni de damă din velur (catifea plușată)</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">500 RON</td>
+            <td data-label="Preț/kg" class="price">11 RON</td>
+          </tr>
+          <tr class="product-row" data-search="rochii toamnă, iarnă rochie din material gros">
+            <td data-label="Produs" class="product-name">Rochii toamnă, iarnă</td>
+            <td data-label="Descriere">Rochie din material gros</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">700 RON</td>
+            <td data-label="Preț/kg" class="price">16 RON</td>
+          </tr>
+          <tr class="product-row" data-search="rochie mini rochie mini, diverse materiale">
+            <td data-label="Produs" class="product-name">Rochie mini</td>
+            <td data-label="Descriere">Rochie mini, diverse materiale</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">900 RON</td>
+            <td data-label="Preț/kg" class="price">20 RON</td>
+          </tr>
+          <tr class="product-row" data-search="rochie din bumbac rochie din bumbac">
+            <td data-label="Produs" class="product-name">Rochie din bumbac</td>
+            <td data-label="Descriere">Rochie din bumbac</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">900 RON</td>
+            <td data-label="Preț/kg" class="price">20 RON</td>
+          </tr>
+          <tr class="product-row" data-search="haine indiene haine indiene de vară">
+            <td data-label="Produs" class="product-name">Haine indiene</td>
+            <td data-label="Descriere">Haine indiene de vară</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">490 RON</td>
+            <td data-label="Preț/kg" class="price">11 RON</td>
+          </tr>
+          <tr class="product-row" data-search="polar bluză polar pentru adulți">
+            <td data-label="Produs" class="product-name">Polar</td>
+            <td data-label="Descriere">Bluză polar pentru adulți</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">350 RON</td>
+            <td data-label="Preț/kg" class="price">8 RON</td>
+          </tr>
+          <tr class="product-row" data-search="polar cu fermoar bluză polar pentru adulți, cu fermoar">
+            <td data-label="Produs" class="product-name">Polar cu fermoar</td>
+            <td data-label="Descriere">Bluză polar pentru adulți, cu fermoar</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">590 RON</td>
+            <td data-label="Preț/kg" class="price">13 RON</td>
+          </tr>
+          <tr class="product-row" data-search="hanorac xxl hanorac cu glugă din bumbac, mărime mare">
+            <td data-label="Produs" class="product-name">Hanorac XXL</td>
+            <td data-label="Descriere">Hanorac cu glugă din bumbac, mărime mare</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">650 RON</td>
+            <td data-label="Preț/kg" class="price">14 RON</td>
+          </tr>
+          <tr class="product-row" data-search="hanorac îmblănit hanorac cu glugă căptușit/îmblănit">
+            <td data-label="Produs" class="product-name">Hanorac îmblănit</td>
+            <td data-label="Descriere">Hanorac cu glugă căptușit/îmblănit</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">700 RON</td>
+            <td data-label="Preț/kg" class="price">16 RON</td>
+          </tr>
+          <tr class="product-row" data-search="hanorac hanorac cu glugă din bumbac pentru adulți, mărime normală">
+            <td data-label="Produs" class="product-name">Hanorac</td>
+            <td data-label="Descriere">Hanorac cu glugă din bumbac pentru adulți, mărime normală</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">850 RON</td>
+            <td data-label="Preț/kg" class="price">19 RON</td>
+          </tr>
+          <tr class="product-row" data-search="vestă polar vestă din polar">
+            <td data-label="Produs" class="product-name">Vestă polar</td>
+            <td data-label="Descriere">Vestă din polar</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">800 RON</td>
+            <td data-label="Preț/kg" class="price">18 RON</td>
+          </tr>
+          <tr class="product-row" data-search="vestă ski vestă din fâș">
+            <td data-label="Produs" class="product-name">Vestă ski</td>
+            <td data-label="Descriere">Vestă din fâș</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">490 RON</td>
+            <td data-label="Preț/kg" class="price">11 RON</td>
+          </tr>
+          <tr class="product-row" data-search="bluză trening bluză de trening din bumbac">
+            <td data-label="Produs" class="product-name">Bluză trening</td>
+            <td data-label="Descriere">Bluză de trening din bumbac</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">640 RON</td>
+            <td data-label="Preț/kg" class="price">14 RON</td>
+          </tr>
+          <tr class="product-row" data-search="bluză trening xxl bluză de trening din bumbac, mărime mare">
+            <td data-label="Produs" class="product-name">Bluză trening XXL</td>
+            <td data-label="Descriere">Bluză de trening din bumbac, mărime mare</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">640 RON</td>
+            <td data-label="Preț/kg" class="price">14 RON</td>
+          </tr>
+          <tr class="product-row" data-search="anorac spandex geacă sport / windbreaker">
+            <td data-label="Produs" class="product-name">Anorac spandex</td>
+            <td data-label="Descriere">Geacă sport / windbreaker</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">850 RON</td>
+            <td data-label="Preț/kg" class="price">19 RON</td>
+          </tr>
+          <tr class="product-row" data-search="halat de baie halat de baie">
+            <td data-label="Produs" class="product-name">Halat de baie</td>
+            <td data-label="Descriere">Halat de baie</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">700 RON</td>
+            <td data-label="Preț/kg" class="price">16 RON</td>
+          </tr>
+          <tr class="product-row" data-search="halat de baie extra halat de baie, calitate superioară">
+            <td data-label="Produs" class="product-name">Halat de baie Extra</td>
+            <td data-label="Descriere">Halat de baie, calitate superioară</td>
+            <td data-label="Kg">40</td>
+            <td data-label="Preț/balot" class="price">820 RON</td>
+            <td data-label="Preț/kg" class="price">21 RON</td>
+          </tr>
+          <tr class="product-row" data-search="cămăși groase cămăși bărbătești groase în carouri, căptușite">
+            <td data-label="Produs" class="product-name">Cămăși groase</td>
+            <td data-label="Descriere">Cămăși bărbătești groase în carouri, căptușite</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">700 RON</td>
+            <td data-label="Preț/kg" class="price">16 RON</td>
+          </tr>
+          <tr class="product-row" data-search="pantaloni trening copii pantaloni de trening pentru copii">
+            <td data-label="Produs" class="product-name">Pantaloni trening copii</td>
+            <td data-label="Descriere">Pantaloni de trening pentru copii</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">600 RON</td>
+            <td data-label="Preț/kg" class="price">13 RON</td>
+          </tr>
+          <tr class="product-row" data-search="halloween costum de carnaval">
+            <td data-label="Produs" class="product-name">Halloween</td>
+            <td data-label="Descriere">Costum de carnaval</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">590 RON</td>
+            <td data-label="Preț/kg" class="price">13 RON</td>
+          </tr>
+          <tr class="product-row" data-search="egări groși egări groși pentru femei">
+            <td data-label="Produs" class="product-name">Egări groși</td>
+            <td data-label="Descriere">Egări groși pentru femei</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">790 RON</td>
+            <td data-label="Preț/kg" class="price">18 RON</td>
+          </tr>
+          <tr class="product-row" data-search="pantaloni trening pantaloni de trening pentru adulți, bumbac, calit. 1">
+            <td data-label="Produs" class="product-name">Pantaloni trening</td>
+            <td data-label="Descriere">Pantaloni de trening pentru adulți, bumbac, calit. 1</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">850 RON</td>
+            <td data-label="Preț/kg" class="price">19 RON</td>
+          </tr>
+          <tr class="product-row" data-search="pantaloni trening 2 pantaloni de trening pentru adulți, bumbac, calit. 2">
+            <td data-label="Produs" class="product-name">Pantaloni trening 2</td>
+            <td data-label="Descriere">Pantaloni de trening pentru adulți, bumbac, calit. 2</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">690 RON</td>
+            <td data-label="Preț/kg" class="price">15 RON</td>
+          </tr>
+          <tr class="product-row" data-search="pantaloni fâș pantaloni de trening din fâș / sintetic">
+            <td data-label="Produs" class="product-name">Pantaloni fâș</td>
+            <td data-label="Descriere">Pantaloni de trening din fâș / sintetic</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">850 RON</td>
+            <td data-label="Preț/kg" class="price">19 RON</td>
+          </tr>
+          <tr class="product-row" data-search="pantaloni fâș mari pantaloni de trening din fâș / sintetic, mărime mare">
+            <td data-label="Produs" class="product-name">Pantaloni fâș mari</td>
+            <td data-label="Descriere">Pantaloni de trening din fâș / sintetic, mărime mare</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">850 RON</td>
+            <td data-label="Preț/kg" class="price">19 RON</td>
+          </tr>
+          <tr class="product-row" data-search="medical îmbrăcăminte de lucru pentru personal medical">
+            <td data-label="Produs" class="product-name">Medical</td>
+            <td data-label="Descriere">Îmbrăcăminte de lucru pentru personal medical</td>
+            <td data-label="Kg">45</td>
+            <td data-label="Preț/balot" class="price">590 RON</td>
+            <td data-label="Preț/kg" class="price">13 RON</td>
+          </tr>
+          <tr class="product-row" data-search="sport xxl îmbrăcăminte sport pentru bărbați și femei, mărimi mari">
+            <td data-label="Produs" class="product-name">Sport XXL</td>
+            <td data-label="Descriere">Îmbrăcăminte sport pentru bărbați și femei, mărimi mari</td>
+            <td data-label="Kg">40</td>
+            <td data-label="Preț/balot" class="price">690 RON</td>
+            <td data-label="Preț/kg" class="price">17 RON</td>
+          </tr>
+          <tr class="product-row" data-search="mix xxl îmbrăcăminte mixtă bărbați și femei, mărimi mari – sac">
+            <td data-label="Produs" class="product-name">MIX XXL</td>
+            <td data-label="Descriere">Îmbrăcăminte mixtă bărbați și femei, mărimi mari – sac</td>
+            <td data-label="Kg">35</td>
+            <td data-label="Preț/balot" class="price">650 RON</td>
+            <td data-label="Preț/kg" class="price">19 RON</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="simple-footer">
+      Scanați codul QR pentru lista de prețuri actualizată.
+    </div>
+  </main>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const rows = Array.from(document.querySelectorAll('.product-row'));
+    const noResults = document.getElementById('noResults');
+
+    searchInput.addEventListener('input', function () {
+      const query = this.value.toLowerCase().trim();
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.getAttribute('data-search');
+        const visible = text.includes(query);
+        row.style.display = visible ? '' : 'none';
+        if (visible) visibleCount++;
+      });
+
+      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    });
+  </script>
+</body>
+</html>
