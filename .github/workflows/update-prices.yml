@@ -1,0 +1,27 @@
+name: Update prices CSV
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Google Sheets CSV
+        run: |
+          curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5bjWev7GFUm1nt7yxveY8iozWNzRu4-kYX1bi4dsMLmoDjlxXAon8amxoYpaREQylNFu2Eh4Q_IYU/pub?gid=0&single=true&output=csv" -o prices.csv
+
+      - name: Commit updated CSV
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add prices.csv
+          git commit -m "Update prices CSV" || exit 0
+          git push
