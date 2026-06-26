@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aktuális árlista – Használt ruha nagyker</title>
+  <style>
+    :root {
+      --black: #111111;
+      --gold: #d8a84f;
+      --gold-dark: #b8892f;
+      --paper: #fffaf0;
+      --text: #1a1a1a;
+      --muted: #666666;
+      --border: #e8e1d2;
+      --shadow: 0 10px 28px rgba(0,0,0,.10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #ffffff 0%, #f7f4ee 100%);
+    }
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+    .hero {
+      background: radial-gradient(circle at top left, #3b2a11, var(--black) 55%);
+      color: #ffffff;
+      border-radius: 22px;
+      padding: 30px 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      top: -60px;
+      width: 220px;
+      height: 220px;
+      background: rgba(216,168,79,.18);
+      border-radius: 50%;
+    }
+    .brand {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .brand-title {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 46px);
+      letter-spacing: 1.5px;
+      line-height: 1.05;
+    }
+    .brand-subtitle {
+      margin: 10px 0 0;
+      color: var(--gold);
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .badge {
+      border: 1px solid rgba(216,168,79,.5);
+      color: var(--gold);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      background: rgba(255,255,255,.06);
+      white-space: nowrap;
+    }
+    .notice {
+      margin: 18px 0;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--gold);
+      border-radius: 16px;
+      padding: 16px 18px;
+      color: #2b2b2b;
+      line-height: 1.45;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+    .pdf-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--black);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 14px 18px;
+      border-radius: 13px;
+      font-weight: 800;
+      box-shadow: 0 5px 14px rgba(0,0,0,.18);
+    }
+    .search-wrap {
+      flex: 1;
+      min-width: 240px;
+    }
+    .search {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 14px 16px;
+      font-size: 16px;
+      outline: none;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    }
+    .search:focus { border-color: var(--gold); }
+    .table-card {
+      background: #ffffff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead {
+      background: var(--black);
+      color: var(--gold);
+    }
+    th {
+      text-align: left;
+      padding: 15px 14px;
+      font-size: 14px;
+      letter-spacing: .3px;
+      white-space: nowrap;
+    }
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #eeeeee;
+      vertical-align: top;
+      line-height: 1.35;
+      font-size: 14px;
+    }
+    tbody tr:hover { background: #fff8e9; }
+    .product-name {
+      font-weight: 800;
+      color: #111111;
+    }
+    .price {
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .message {
+      margin: 16px 0;
+      padding: 16px;
+      border-radius: 14px;
+      background: #fff4d8;
+      border: 1px solid #efd391;
+      font-weight: 700;
+    }
+    .footer {
+      margin-top: 18px;
+      background: var(--black);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 22px;
+      text-align: center;
+      line-height: 1.55;
+      box-shadow: var(--shadow);
+    }
+    .footer strong { color: var(--gold); font-size: 18px; }
+    .footer a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 800;
+    }
+    @media (max-width: 760px) {
+      .page { padding: 10px; }
+      .hero {
+        border-radius: 18px;
+        padding: 22px 18px;
+      }
+      .brand { display: block; }
+      .badge {
+        display: inline-block;
+        margin-top: 14px;
+      }
+      .notice { font-size: 14px; }
+      .actions { display: block; }
+      .pdf-button {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 12px;
+      }
+      .search-wrap { min-width: 100%; }
+      .table-card {
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      table, thead, tbody, th, td, tr { display: block; }
+      thead { display: none; }
+      tbody tr {
+        background: #ffffff;
+        margin: 0 0 13px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 5px 16px rgba(0,0,0,.08);
+        overflow: hidden;
+      }
+      tbody tr:hover { background: #ffffff; }
+      td {
+        border-bottom: 1px solid #eeeeee;
+        padding: 10px 14px;
+        font-size: 15px;
+      }
+      td:last-child { border-bottom: 0; }
+      td::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 4px;
+        color: var(--gold-dark);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        font-weight: 900;
+      }
+      .product-name {
+        background: #111111;
+        color: #ffffff;
+        font-size: 17px;
+      }
+      .product-name::before { color: var(--gold); }
+      .price { font-size: 16px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="brand">
+        <div>
+          <h1 class="brand-title">Árlista</h1>
+          <p class="brand-subtitle">Használt ruha nagykereskedelmi árlista</p>
+        </div>
+        <div class="badge">Mindig aktuális árlista</div>
+      </div>
+    </section>
+
+    <section class="notice">
+      Az árlista automatikusan frissül a Google Sheets alapján. Az árak tájékoztató jellegűek, a készlet és az árak változhatnak.
+    </section>
+
+    <section class="actions">
+      <a class="pdf-button" href="arlista2026.pdf" target="_blank" rel="noopener">📄 Árlista letöltése (PDF)</a>
+      <div class="search-wrap">
+        <input id="searchInput" class="search" type="search" placeholder="🔍 Keresés termékre vagy leírásra...">
+      </div>
+    </section>
+
+    <div id="status" class="message">Árlista betöltése...</div>
+
+    <section class="table-card">
+      <table aria-label="Használt ruha nagykereskedelmi árlista">
+        <thead>
+          <tr>
+            <th>Termék</th>
+            <th>Termék leírás</th>
+            <th>Kg</th>
+            <th>Ár/bála</th>
+            <th>Ár/kg</th>
+          </tr>
+        </thead>
+        <tbody id="priceTable"></tbody>
+      </table>
+    </section>
+
+    <footer class="footer">
+      <strong>UNIQUE TEXTIL Kft</strong><br>
+      Tel: <a href="tel:+36705668292">+36 70 566 8292</a><br>
+      Email: <a href="mailto:uniquetextil23@gmail.com">uniquetextil23@gmail.com</a><br>
+      Nyíregyháza, Móricz Zsigmond u. 24
+    </footer>
+  </main>
+
+  <script>
+    const CSV_URL = "prices.csv";
+    const tableBody = document.getElementById("priceTable");
+    const searchInput = document.getElementById("searchInput");
+    const statusBox = document.getElementById("status");
+
+    function normalizeHeader(value) {
+      return String(value || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, " ");
+    }
+
+    function isActive(value) {
+      const v = String(value || "").trim().toLowerCase();
+      if (!v) return true;
+      return ["igen", "yes", "da", "true", "1", "aktiv", "active", "x"].includes(v);
+    }
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"' && inQuotes && next === '"') {
+          cell += '"';
+          i++;
+        } else if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+          row.push(cell);
+          cell = "";
+        } else if ((char === "\n" || char === "\r") && !inQuotes) {
+          if (char === "\r" && next === "\n") i++;
+          row.push(cell);
+          if (row.some(item => String(item).trim() !== "")) rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += char;
+        }
+      }
+
+      row.push(cell);
+      if (row.some(item => String(item).trim() !== "")) rows.push(row);
+      return rows;
+    }
+
+    function getValue(item, possibleNames) {
+      for (const name of possibleNames) {
+        const normalized = normalizeHeader(name);
+        if (item[normalized] !== undefined) return item[normalized];
+      }
+      return "";
+    }
+
+    function escapeHTML(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderRows(items) {
+      tableBody.innerHTML = "";
+
+      const visibleItems = items.filter(item =>
+        isActive(getValue(item, ["aktiv", "active"]))
+      );
+
+      visibleItems.forEach(item => {
+        const termek = getValue(item, ["hu termék", "hu termek", "termék", "termek"]);
+        const leiras = getValue(item, ["hu leírás", "hu leiras", "leírás", "leiras"]);
+        const kg = getValue(item, ["kg"]);
+        const arBala = getValue(item, ["ár/bála", "ar/bala", "ár bála", "ar bala"]);
+        const arKg = getValue(item, ["ár/kg", "ar/kg", "ár kg", "ar kg"]);
+
+        if (!termek && !leiras) return;
+
+        const tr = document.createElement("tr");
+        tr.className = "product-row";
+        tr.dataset.search = `${termek} ${leiras}`.toLowerCase();
+
+        tr.innerHTML = `
+          <td data-label="Termék" class="product-name">${escapeHTML(termek)}</td>
+          <td data-label="Leírás">${escapeHTML(leiras)}</td>
+          <td data-label="Kg">${escapeHTML(kg)}</td>
+          <td data-label="Ár/bála" class="price">${escapeHTML(arBala)}</td>
+          <td data-label="Ár/kg" class="price">${escapeHTML(arKg)}</td>
+        `;
+
+        tableBody.appendChild(tr);
+      });
+
+      const count = document.querySelectorAll(".product-row").length;
+      statusBox.style.display = count ? "none" : "block";
+      statusBox.textContent = count ? "" : "Nincsenek aktív termékek a táblázatban.";
+    }
+
+    function applySearch() {
+      const query = searchInput.value.toLowerCase().trim();
+      const rows = Array.from(document.querySelectorAll(".product-row"));
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const visible = row.dataset.search.includes(query);
+        row.style.display = visible ? "" : "none";
+        if (visible) visibleCount++;
+      });
+
+      statusBox.style.display = visibleCount === 0 ? "block" : "none";
+      statusBox.textContent = visibleCount === 0 ? "Nincs találat erre a keresésre." : "";
+    }
+
+    async function loadPrices() {
+      try {
+        const response = await fetch(CSV_URL + "?v=" + Date.now());
+        if (!response.ok) {
+          throw new Error("Nem tölthető be a prices.csv. Status: " + response.status);
+        }
+
+        const csvText = await response.text();
+        const parsed = parseCSV(csvText);
+
+        if (!parsed.length || parsed.length < 2) {
+          throw new Error("A prices.csv üres vagy nincs benne adat.");
+        }
+
+        const headers = parsed[0].map(normalizeHeader);
+        const dataRows = parsed.slice(1);
+
+        const items = dataRows.map(row => {
+          const item = {};
+          headers.forEach((header, index) => {
+            item[header] = (row[index] || "").trim();
+          });
+          return item;
+        });
+
+        renderRows(items);
+      } catch (error) {
+        console.error(error);
+        statusBox.style.display = "block";
+        statusBox.textContent = "Az árlista nem tölthető be. Ellenőrizd, hogy a prices.csv az index.html mellett van-e.";
+      }
+    }
+
+    searchInput.addEventListener("input", applySearch);
+    loadPrices();
+  </script>
+</body>
+</html>
