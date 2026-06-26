@@ -15,22 +15,18 @@
       --border: #e8e1d2;
       --shadow: 0 10px 28px rgba(0,0,0,.10);
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
       background: linear-gradient(180deg, #ffffff 0%, #f7f4ee 100%);
     }
-
     .page {
       max-width: 1180px;
       margin: 0 auto;
       padding: 18px;
     }
-
     .hero {
       background: radial-gradient(circle at top left, #3b2a11, var(--black) 55%);
       color: #ffffff;
@@ -40,7 +36,6 @@
       overflow: hidden;
       position: relative;
     }
-
     .hero::after {
       content: "";
       position: absolute;
@@ -51,7 +46,6 @@
       background: rgba(216,168,79,.18);
       border-radius: 50%;
     }
-
     .brand {
       position: relative;
       z-index: 1;
@@ -61,21 +55,18 @@
       align-items: center;
       flex-wrap: wrap;
     }
-
     .brand-title {
       margin: 0;
       font-size: clamp(28px, 5vw, 46px);
       letter-spacing: 1.5px;
       line-height: 1.05;
     }
-
     .brand-subtitle {
       margin: 10px 0 0;
       color: var(--gold);
       font-size: 17px;
       font-weight: 700;
     }
-
     .badge {
       border: 1px solid rgba(216,168,79,.5);
       color: var(--gold);
@@ -85,7 +76,6 @@
       background: rgba(255,255,255,.06);
       white-space: nowrap;
     }
-
     .notice {
       margin: 18px 0;
       background: var(--paper);
@@ -96,7 +86,6 @@
       color: #2b2b2b;
       line-height: 1.45;
     }
-
     .actions {
       display: flex;
       gap: 12px;
@@ -104,7 +93,6 @@
       flex-wrap: wrap;
       margin: 18px 0;
     }
-
     .pdf-button {
       display: inline-flex;
       align-items: center;
@@ -116,19 +104,11 @@
       border-radius: 13px;
       font-weight: 800;
       box-shadow: 0 5px 14px rgba(0,0,0,.18);
-      transition: transform .15s ease, background .15s ease;
     }
-
-    .pdf-button:hover {
-      background: #2a2a2a;
-      transform: translateY(-1px);
-    }
-
     .search-wrap {
       flex: 1;
       min-width: 240px;
     }
-
     .search {
       width: 100%;
       border: 1px solid var(--border);
@@ -139,9 +119,7 @@
       background: #ffffff;
       box-shadow: 0 4px 12px rgba(0,0,0,.06);
     }
-
     .search:focus { border-color: var(--gold); }
-
     .table-card {
       background: #ffffff;
       border-radius: 18px;
@@ -149,17 +127,14 @@
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
     }
-
     thead {
       background: var(--black);
       color: var(--gold);
     }
-
     th {
       text-align: left;
       padding: 15px 14px;
@@ -167,7 +142,6 @@
       letter-spacing: .3px;
       white-space: nowrap;
     }
-
     td {
       padding: 14px;
       border-bottom: 1px solid #eeeeee;
@@ -175,19 +149,15 @@
       line-height: 1.35;
       font-size: 14px;
     }
-
     tbody tr:hover { background: #fff8e9; }
-
     .product-name {
       font-weight: 800;
       color: #111111;
     }
-
     .price {
       font-weight: 900;
       white-space: nowrap;
     }
-
     .message {
       margin: 16px 0;
       padding: 16px;
@@ -196,7 +166,6 @@
       border: 1px solid #efd391;
       font-weight: 700;
     }
-
     .simple-footer {
       margin-top: 18px;
       text-align: center;
@@ -204,45 +173,33 @@
       font-size: 14px;
       padding: 16px;
     }
-
     @media (max-width: 760px) {
       .page { padding: 10px; }
-
       .hero {
         border-radius: 18px;
         padding: 22px 18px;
       }
-
       .brand { display: block; }
-
       .badge {
         display: inline-block;
         margin-top: 14px;
       }
-
       .notice { font-size: 14px; }
-
       .actions { display: block; }
-
       .pdf-button {
         width: 100%;
         justify-content: center;
         margin-bottom: 12px;
       }
-
       .search-wrap { min-width: 100%; }
-
       .table-card {
         background: transparent;
         border: 0;
         box-shadow: none;
         border-radius: 0;
       }
-
       table, thead, tbody, th, td, tr { display: block; }
-
       thead { display: none; }
-
       tbody tr {
         background: #ffffff;
         margin: 0 0 13px;
@@ -251,17 +208,13 @@
         box-shadow: 0 5px 16px rgba(0,0,0,.08);
         overflow: hidden;
       }
-
       tbody tr:hover { background: #ffffff; }
-
       td {
         border-bottom: 1px solid #eeeeee;
         padding: 10px 14px;
         font-size: 15px;
       }
-
       td:last-child { border-bottom: 0; }
-
       td::before {
         content: attr(data-label);
         display: block;
@@ -272,15 +225,12 @@
         letter-spacing: .5px;
         font-weight: 900;
       }
-
       .product-name {
         background: #111111;
         color: #ffffff;
         font-size: 17px;
       }
-
       .product-name::before { color: var(--gold); }
-
       .price { font-size: 16px; }
     }
   </style>
@@ -299,7 +249,7 @@
     </section>
 
     <section class="notice">
-      Lista de prețuri se actualizează automat din Google Sheets. Prețurile sunt informative, iar stocul și prețurile pot suferi modificări.
+      Lista de prețuri se actualizează automat din Google Sheets prin fișierul prices.csv. Prețurile sunt informative, iar stocul și prețurile pot suferi modificări.
     </section>
 
     <section class="actions">
@@ -332,7 +282,7 @@
   </main>
 
   <script>
-    const CSV_URL = const CSV_URL = "prices.csv"";
+    const CSV_URL = "prices.csv";
     const tableBody = document.getElementById("priceTable");
     const searchInput = document.getElementById("searchInput");
     const statusBox = document.getElementById("status");
@@ -341,6 +291,8 @@
       return String(value || "")
         .trim()
         .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
         .replace(/\s+/g, " ");
     }
 
@@ -386,7 +338,8 @@
 
     function getValue(item, possibleNames) {
       for (const name of possibleNames) {
-        if (item[name] !== undefined) return item[name];
+        const normalized = normalizeHeader(name);
+        if (item[normalized] !== undefined) return item[normalized];
       }
       return "";
     }
@@ -402,14 +355,19 @@
 
     function renderRows(items) {
       tableBody.innerHTML = "";
-      const visibleItems = items.filter(item => isActive(getValue(item, ["aktiv", "active"])));
+
+      const visibleItems = items.filter(item =>
+        isActive(getValue(item, ["aktiv", "active"]))
+      );
 
       visibleItems.forEach(item => {
-        const produs = getValue(item, ["ro produs", "ro_produs", "produs"]);
-        const descriere = getValue(item, ["ro descriere", "ro_descriere", "descriere"]);
+        const produs = getValue(item, ["ro produs", "produs"]);
+        const descriere = getValue(item, ["ro descriere", "descriere"]);
         const kg = getValue(item, ["kg"]);
         const pretBalot = getValue(item, ["preț/balot", "pret/balot", "preț balot", "pret balot"]);
         const pretKg = getValue(item, ["preț/kg", "pret/kg", "preț kg", "pret kg"]);
+
+        if (!produs && !descriere) return;
 
         const tr = document.createElement("tr");
         tr.className = "product-row";
@@ -426,8 +384,9 @@
         tableBody.appendChild(tr);
       });
 
-      statusBox.style.display = visibleItems.length ? "none" : "block";
-      statusBox.textContent = visibleItems.length ? "" : "Nu există produse active în tabel.";
+      const count = document.querySelectorAll(".product-row").length;
+      statusBox.style.display = count ? "none" : "block";
+      statusBox.textContent = count ? "" : "Nu există produse active în tabel.";
     }
 
     function applySearch() {
@@ -447,12 +406,18 @@
 
     async function loadPrices() {
       try {
-        const proxiedUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_URL + "&cacheBust=" + Date.now());
         const response = await fetch(CSV_URL + "?v=" + Date.now());
-        if (!response.ok) throw new Error("CSV loading failed");
+        if (!response.ok) {
+          throw new Error("Nu se poate încărca prices.csv. Status: " + response.status);
+        }
 
         const csvText = await response.text();
         const parsed = parseCSV(csvText);
+
+        if (!parsed.length || parsed.length < 2) {
+          throw new Error("prices.csv este gol sau nu are rânduri de date.");
+        }
+
         const headers = parsed[0].map(normalizeHeader);
         const dataRows = parsed.slice(1);
 
@@ -468,7 +433,7 @@
       } catch (error) {
         console.error(error);
         statusBox.style.display = "block";
-        statusBox.textContent = "Lista de prețuri nu s-a putut încărca. Vă rugăm încercați din nou.";
+        statusBox.textContent = "Lista de prețuri nu s-a putut încărca. Verificați dacă fișierul prices.csv există lângă index.html.";
       }
     }
 
