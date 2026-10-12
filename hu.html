@@ -158,6 +158,14 @@
       font-weight: 900;
       white-space: nowrap;
     }
+    .promo-section { margin: 20px 0; }
+    .promo-heading { font-size: 23px; margin: 0 0 12px; color: #a3221c; }
+    .promo-row { background: #fff4ed; }
+    .promo-tag { display: inline-block; background: #b42318; color: white; font-size: 11px; border-radius: 6px; padding: 3px 7px; margin-left: 8px; }
+    .old-price { color: #777; text-decoration: line-through; font-weight: normal; display: block; font-size: 12px; }
+    .discount { color: #b42318; font-size: 12px; font-weight: 800; display: block; }
+    .promo-price { color: #a51c16; }
+    [hidden] { display: none !important; }
     .message {
       margin: 16px 0;
       padding: 16px;
@@ -270,6 +278,14 @@
 
     <div id="status" class="message">Árlista betöltése...</div>
 
+    <section id="promoSection" class="promo-section" hidden>
+      <h2 class="promo-heading">🔥 AKCIÓS AJÁNLATOK</h2>
+      <div class="table-card"><table aria-label="Akciós termékek">
+        <thead><tr><th>Termék</th><th>Termék leírás</th><th>Kg</th><th>Ár/bála</th><th>Ár/kg</th></tr></thead>
+        <tbody id="promoTable"></tbody>
+      </table></div>
+    </section>
+    <h2 id="regularHeading" style="font-size:21px;margin:18px 0 12px">ÁRLISTA</h2>
     <section class="table-card">
       <table aria-label="Használt ruha nagykereskedelmi árlista">
         <thead>
@@ -365,55 +381,72 @@
         .replaceAll("'", "&#039;");
     }
 
+    const promoTable = document.getElementById("promoTable");
+    const promoSection = document.getElementById("promoSection");
+    const regularHeading = document.getElementById("regularHeading");
+
+    function isPromo(value) {
+      return ["igen", "yes", "da", "true", "1", "x"].includes(String(value || "").trim().toLowerCase());
+    }
+
+    function priceNumber(value) {
+      const raw = String(value ?? "").replace(/\s/g, "").replace(/[^0-9,.-]/g, "");
+      if (!raw) return NaN;
+      const comma = raw.lastIndexOf(","), dot = raw.lastIndexOf(".");
+      if (comma >= 0 && dot >= 0) return Number(raw.replace(comma > dot ? /\./g : /,/g, "").replace(",", "."));
+      if (comma >= 0) return Number(raw.replace(",", "."));
+      return Number(raw);
+    }
+
     function renderRows(items) {
       tableBody.innerHTML = "";
-
-      const visibleItems = items.filter(item =>
-        isActive(getValue(item, ["aktiv", "active"]))
-      );
-
-      visibleItems.forEach(item => {
+      promoTable.innerHTML = "";
+      items.filter(item => isActive(getValue(item, ["aktiv", "active"]))).forEach(item => {
         const termek = getValue(item, ["hu termék", "hu termek", "termék", "termek"]);
         const leiras = getValue(item, ["hu leírás", "hu leiras", "leírás", "leiras"]);
+        if (!termek && !leiras) return;
         const kg = getValue(item, ["kg"]);
         const arBala = getValue(item, ["ár/bála", "ar/bala", "ár bála", "ar bala"]);
         const arKg = getValue(item, ["ár/kg", "ar/kg", "ár kg", "ar kg"]);
-
-        if (!termek && !leiras) return;
-
+        const promo = isPromo(getValue(item, ["promo"]));
+        const oldPrice = getValue(item, ["régi ár huf", "regi ar huf"]);
+        const old = priceNumber(oldPrice), current = priceNumber(arBala);
+        const validDiscount = promo && Number.isFinite(old) && Number.isFinite(current) && old > current && current >= 0;
+        const percentage = validDiscount ? Math.round((old - current) / old * 100) : 0;
         const tr = document.createElement("tr");
-        tr.className = "product-row";
+        tr.className = "product-row" + (promo ? " promo-row" : "");
         tr.dataset.search = `${termek} ${leiras}`.toLowerCase();
-
         tr.innerHTML = `
-          <td data-label="Termék" class="product-name">${escapeHTML(termek)}</td>
+          <td data-label="Termék" class="product-name">${escapeHTML(termek)}${promo ? '<span class="promo-tag">AKCIÓ</span>' : ''}</td>
           <td data-label="Leírás">${escapeHTML(leiras)}</td>
           <td data-label="Kg">${escapeHTML(kg)}</td>
-          <td data-label="Ár/bála" class="price">${escapeHTML(arBala)}</td>
-          <td data-label="Ár/kg" class="price">${escapeHTML(arKg)}</td>
-        `;
-
-        tableBody.appendChild(tr);
+          <td data-label="Ár/bála" class="price ${promo ? 'promo-price' : ''}">
+            ${validDiscount ? `<span class="old-price">${escapeHTML(oldPrice)} Ft</span>` : ''}
+            ${escapeHTML(arBala)}
+            ${validDiscount ? `<span class="discount">−${percentage}%</span>` : ''}
+          </td>
+          <td data-label="Ár/kg" class="price">${escapeHTML(arKg)}</td>`;
+        (promo ? promoTable : tableBody).appendChild(tr);
       });
-
-      const count = document.querySelectorAll(".product-row").length;
-      statusBox.style.display = count ? "none" : "block";
-      statusBox.textContent = count ? "" : "Nincsenek aktív termékek a táblázatban.";
+      applySearch();
     }
 
     function applySearch() {
       const query = searchInput.value.toLowerCase().trim();
-      const rows = Array.from(document.querySelectorAll(".product-row"));
-      let visibleCount = 0;
-
-      rows.forEach(row => {
+      let count = 0, promos = 0, regulars = 0;
+      document.querySelectorAll(".product-row").forEach(row => {
         const visible = row.dataset.search.includes(query);
         row.style.display = visible ? "" : "none";
-        if (visible) visibleCount++;
+        if (visible) {
+          count++;
+          if (row.parentElement === promoTable) promos++;
+          else regulars++;
+        }
       });
-
-      statusBox.style.display = visibleCount === 0 ? "block" : "none";
-      statusBox.textContent = visibleCount === 0 ? "Nincs találat erre a keresésre." : "";
+      promoSection.hidden = promos === 0;
+      regularHeading.hidden = regulars === 0;
+      statusBox.style.display = count ? "none" : "block";
+      statusBox.textContent = count ? "" : "Nincs találat erre a keresésre.";
     }
 
     async function loadPrices() {
