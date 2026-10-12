@@ -158,6 +158,14 @@
       font-weight: 900;
       white-space: nowrap;
     }
+    .promo-section { margin: 20px 0; }
+    .promo-heading { font-size: 23px; margin: 0 0 12px; color: #9b271e; }
+    .promo-row { background: #fff4ed; }
+    .promo-tag { display: inline-block; background: #b42318; color: white; font-size: 11px; border-radius: 6px; padding: 3px 7px; margin-left: 8px; }
+    .old-price { color: #777; text-decoration: line-through; font-weight: normal; display: block; font-size: 12px; }
+    .discount { color: #b42318; font-size: 12px; font-weight: 800; display: block; }
+    .promo-price { color: #a51c16; }
+    [hidden] { display: none !important; }
     .message {
       margin: 16px 0;
       padding: 16px;
@@ -261,6 +269,16 @@
 
     <div id="status" class="message">Se încarcă lista de prețuri...</div>
 
+    <section id="promoSection" class="promo-section" hidden>
+      <h2 class="promo-heading">🔥 PROMOȚII SPECIALE</h2>
+      <div class="table-card">
+        <table aria-label="Produse promoționale">
+          <thead><tr><th>Produs</th><th>Descriere</th><th>Kg</th><th>Preț/balot</th><th>Preț/kg</th></tr></thead>
+          <tbody id="promoTable"></tbody>
+        </table>
+      </div>
+    </section>
+    <h2 id="regularHeading" style="font-size:21px;margin:18px 0 12px">LISTĂ DE PREȚURI</h2>
     <section class="table-card">
       <table aria-label="Lista de prețuri haine second hand en-gros">
         <thead>
@@ -353,55 +371,69 @@
         .replaceAll("'", "&#039;");
     }
 
+    const promoTable = document.getElementById("promoTable");
+    const promoSection = document.getElementById("promoSection");
+    const regularHeading = document.getElementById("regularHeading");
+
+    function isPromo(value) {
+      return ["igen", "yes", "da", "true", "1", "x"].includes(String(value || "").trim().toLowerCase());
+    }
+    function priceNumber(value) {
+      const raw = String(value ?? "").replace(/\s/g, "").replace(/[^0-9,.-]/g, "");
+      if (!raw) return NaN;
+      const comma = raw.lastIndexOf(","), dot = raw.lastIndexOf(".");
+      if (comma >= 0 && dot >= 0) return Number(raw.replace(comma > dot ? /\./g : /,/g, "").replace(",", "."));
+      if (comma >= 0) return Number(raw.replace(",", "."));
+      return Number(raw);
+    }
     function renderRows(items) {
       tableBody.innerHTML = "";
-
-      const visibleItems = items.filter(item =>
-        isActive(getValue(item, ["aktiv", "active"]))
-      );
-
-      visibleItems.forEach(item => {
+      promoTable.innerHTML = "";
+      items.filter(item => isActive(getValue(item, ["aktiv", "active"]))).forEach(item => {
         const produs = getValue(item, ["ro produs", "produs"]);
         const descriere = getValue(item, ["ro descriere", "descriere"]);
+        if (!produs && !descriere) return;
         const kg = getValue(item, ["kg"]);
         const pretBalot = getValue(item, ["preț/balot", "pret/balot", "preț balot", "pret balot"]);
         const pretKg = getValue(item, ["preț/kg", "pret/kg", "preț kg", "pret kg"]);
-
-        if (!produs && !descriere) return;
-
+        const promo = isPromo(getValue(item, ["promo"]));
+        const oldPrice = getValue(item, ["régi ár ron", "regi ar ron"]);
+        const old = priceNumber(oldPrice), current = priceNumber(pretBalot);
+        const discount = promo && Number.isFinite(old) && Number.isFinite(current) && old > current && current >= 0;
+        const percentage = discount ? Math.round((old - current) / old * 100) : 0;
         const tr = document.createElement("tr");
-        tr.className = "product-row";
+        tr.className = "product-row" + (promo ? " promo-row" : "");
         tr.dataset.search = `${produs} ${descriere}`.toLowerCase();
-
         tr.innerHTML = `
-          <td data-label="Produs" class="product-name">${escapeHTML(produs)}</td>
+          <td data-label="Produs" class="product-name">${escapeHTML(produs)}${promo ? '<span class="promo-tag">PROMO</span>' : ''}</td>
           <td data-label="Descriere">${escapeHTML(descriere)}</td>
           <td data-label="Kg">${escapeHTML(kg)}</td>
-          <td data-label="Preț/balot" class="price">${escapeHTML(pretBalot)}</td>
-          <td data-label="Preț/kg" class="price">${escapeHTML(pretKg)}</td>
-        `;
-
-        tableBody.appendChild(tr);
+          <td data-label="Preț/balot" class="price ${promo ? 'promo-price' : ''}">
+            ${discount ? `<span class="old-price">${escapeHTML(oldPrice)} RON</span>` : ''}
+            ${escapeHTML(pretBalot)}
+            ${discount ? `<span class="discount">−${percentage}%</span>` : ''}
+          </td>
+          <td data-label="Preț/kg" class="price">${escapeHTML(pretKg)}</td>`;
+        (promo ? promoTable : tableBody).appendChild(tr);
       });
-
-      const count = document.querySelectorAll(".product-row").length;
-      statusBox.style.display = count ? "none" : "block";
-      statusBox.textContent = count ? "" : "Nu există produse active în tabel.";
+      applySearch();
     }
-
     function applySearch() {
       const query = searchInput.value.toLowerCase().trim();
-      const rows = Array.from(document.querySelectorAll(".product-row"));
-      let visibleCount = 0;
-
-      rows.forEach(row => {
+      let count = 0, promos = 0, regulars = 0;
+      document.querySelectorAll(".product-row").forEach(row => {
         const visible = row.dataset.search.includes(query);
         row.style.display = visible ? "" : "none";
-        if (visible) visibleCount++;
+        if (visible) {
+          count++;
+          if (row.parentElement === promoTable) promos++;
+          else regulars++;
+        }
       });
-
-      statusBox.style.display = visibleCount === 0 ? "block" : "none";
-      statusBox.textContent = visibleCount === 0 ? "Nu există rezultate pentru această căutare." : "";
+      promoSection.hidden = promos === 0;
+      regularHeading.hidden = regulars === 0;
+      statusBox.style.display = count ? "none" : "block";
+      statusBox.textContent = count ? "" : "Nu există rezultate pentru această căutare.";
     }
 
     async function loadPrices() {
