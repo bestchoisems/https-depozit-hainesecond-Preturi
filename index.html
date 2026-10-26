@@ -158,6 +158,15 @@
       font-weight: 900;
       white-space: nowrap;
     }
+    html { scroll-behavior: smooth; }
+    .quick-nav { display:flex; flex-wrap:wrap; gap:10px; margin:18px 0; }
+    .quick-nav a { flex:1; min-width:170px; padding:14px 10px; text-align:center;
+      border-radius:12px; background:#111; color:#d8a84f; text-decoration:none;
+      font-weight:800; border:1px solid #b8892f; }
+    .quick-nav a:hover { background:#3b2a11; }
+    .category-section { margin:24px 0; scroll-margin-top:15px; }
+    .category-heading { font-size:22px; margin:0 0 12px; }
+    [hidden] { display:none !important; }
     .promo-section { margin: 20px 0; }
     .promo-heading { font-size: 23px; margin: 0 0 12px; color: #9b271e; }
     .promo-row { background: #fff4ed; }
@@ -269,31 +278,29 @@
 
     <div id="status" class="message">Se încarcă lista de prețuri...</div>
 
-    <section id="promoSection" class="promo-section" hidden>
-      <h2 class="promo-heading">🔥 PROMOȚII SPECIALE</h2>
-      <div class="table-card">
-        <table aria-label="Produse promoționale">
-          <thead><tr><th>Produs</th><th>Descriere</th><th>Kg</th><th>Preț/balot</th><th>Preț/kg</th></tr></thead>
-          <tbody id="promoTable"></tbody>
-        </table>
-      </div>
+    <nav class="quick-nav" aria-label="Navigare rapidă">
+      <a id="nav-promo" href="#promoSection">🔥 Promoții</a>
+      <a id="nav-winter" href="#winterSection">🍂 Toamnă / Iarnă</a>
+      <a id="nav-summer" href="#summerSection">☀️ Primăvară / Vară</a>
+    </nav>
+    <section id="promoSection" class="category-section" hidden>
+      <h2 class="category-heading promo-heading">🔥 PROMOȚII</h2>
+      <div class="table-card"><table aria-label="🔥 PROMOȚII">
+        <thead><tr><th>Produs</th><th>Descriere</th><th>Kg</th><th>Preț/balot</th><th>Preț/kg</th></tr></thead><tbody id="promoTable"></tbody>
+      </table></div>
     </section>
-    <h2 id="regularHeading" style="font-size:21px;margin:18px 0 12px">LISTĂ DE PREȚURI</h2>
-    <section class="table-card">
-      <table aria-label="Lista de prețuri haine second hand en-gros">
-        <thead>
-          <tr>
-            <th>Produs</th>
-            <th>Descriere</th>
-            <th>Kg</th>
-            <th>Preț/balot</th>
-            <th>Preț/kg</th>
-          </tr>
-        </thead>
-        <tbody id="priceTable"></tbody>
-      </table>
+    <section id="winterSection" class="category-section" hidden>
+      <h2 class="category-heading">🍂 ARTICOLE DE TOAMNĂ / IARNĂ</h2>
+      <div class="table-card"><table aria-label="🍂 ARTICOLE DE TOAMNĂ / IARNĂ">
+        <thead><tr><th>Produs</th><th>Descriere</th><th>Kg</th><th>Preț/balot</th><th>Preț/kg</th></tr></thead><tbody id="winterTable"></tbody>
+      </table></div>
     </section>
-
+    <section id="summerSection" class="category-section" hidden>
+      <h2 class="category-heading">☀️ ARTICOLE DE PRIMĂVARĂ / VARĂ</h2>
+      <div class="table-card"><table aria-label="☀️ ARTICOLE DE PRIMĂVARĂ / VARĂ">
+        <thead><tr><th>Produs</th><th>Descriere</th><th>Kg</th><th>Preț/balot</th><th>Preț/kg</th></tr></thead><tbody id="summerTable"></tbody>
+      </table></div>
+    </section>
     <div class="simple-footer">
       Scanați codul QR pentru lista de prețuri actualizată.
     </div>
@@ -371,69 +378,75 @@
         .replaceAll("'", "&#039;");
     }
 
-    const promoTable = document.getElementById("promoTable");
-    const promoSection = document.getElementById("promoSection");
-    const regularHeading = document.getElementById("regularHeading");
-
-    function isPromo(value) {
-      return ["igen", "yes", "da", "true", "1", "x"].includes(String(value || "").trim().toLowerCase());
-    }
-    function priceNumber(value) {
-      const raw = String(value ?? "").replace(/\s/g, "").replace(/[^0-9,.-]/g, "");
-      if (!raw) return NaN;
-      const comma = raw.lastIndexOf(","), dot = raw.lastIndexOf(".");
-      if (comma >= 0 && dot >= 0) return Number(raw.replace(comma > dot ? /\./g : /,/g, "").replace(",", "."));
-      if (comma >= 0) return Number(raw.replace(",", "."));
-      return Number(raw);
+    const categoryTables = {
+      promo: document.getElementById("promoTable"),
+      winter: document.getElementById("winterTable"),
+      summer: document.getElementById("summerTable")
+    };
+    function categoryOf(value) {
+      const v = normalizeHeader(value).replace(/[\s_\-/]+/g, "");
+      if (["promo", "promocio", "promotii", "akcio", "akciok"].includes(v)) return "promo";
+      if (["osztel", "oszitel", "toamnaiarna", "winter", "autumnwinter"].includes(v)) return "winter";
+      if (["tavasznyar", "tavaszinyari", "primavaravara", "summer", "springsummer"].includes(v)) return "summer";
+      return "";
     }
     function renderRows(items) {
-      tableBody.innerHTML = "";
-      promoTable.innerHTML = "";
+      Object.values(categoryTables).forEach(table => table.innerHTML = "");
+      let missingCategory = 0;
       items.filter(item => isActive(getValue(item, ["aktiv", "active"]))).forEach(item => {
-        const produs = getValue(item, ["ro produs", "produs"]);
-        const descriere = getValue(item, ["ro descriere", "descriere"]);
-        if (!produs && !descriere) return;
-        const kg = getValue(item, ["kg"]);
-        const pretBalot = getValue(item, ["preț/balot", "pret/balot", "preț balot", "pret balot"]);
-        const pretKg = getValue(item, ["preț/kg", "pret/kg", "preț kg", "pret kg"]);
-        const promo = isPromo(getValue(item, ["promo"]));
+        const termek = getValue(item, ["ro produs", "produs"]);
+        const leiras = getValue(item, ["ro descriere", "descriere"]);
+        const arBala = getValue(item, ["preț/balot", "pret/balot", "preț balot", "pret balot"]);
+        const arKg = getValue(item, ["preț/kg", "pret/kg", "preț kg", "pret kg"]);
         const oldPrice = getValue(item, ["régi ár ron", "regi ar ron"]);
-        const old = priceNumber(oldPrice), current = priceNumber(pretBalot);
-        const discount = promo && Number.isFinite(old) && Number.isFinite(current) && old > current && current >= 0;
-        const percentage = discount ? Math.round((old - current) / old * 100) : 0;
+        if (!termek && !leiras) return;
+        const kg = getValue(item, ["kg"]);
+        const category = categoryOf(getValue(item, ["kategoria", "kategória", "category"]));
+        if (!category) { missingCategory++; return; }
+        const promo = category === "promo";
+        const old = priceNumber(oldPrice), current = priceNumber(arBala);
+        const validDiscount = promo && Number.isFinite(old) && Number.isFinite(current) && old > current && current >= 0;
+        const percentage = validDiscount ? Math.round((old - current) / old * 100) : 0;
         const tr = document.createElement("tr");
         tr.className = "product-row" + (promo ? " promo-row" : "");
-        tr.dataset.search = `${produs} ${descriere}`.toLowerCase();
+        tr.dataset.search = `${termek} ${leiras}`.toLocaleLowerCase();
         tr.innerHTML = `
-          <td data-label="Produs" class="product-name">${escapeHTML(produs)}${promo ? '<span class="promo-tag">PROMO</span>' : ''}</td>
-          <td data-label="Descriere">${escapeHTML(descriere)}</td>
+          <td data-label="Produs" class="product-name">${escapeHTML(termek)}${promo ? '<span class="promo-tag">PROMO</span>' : ''}</td>
+          <td data-label="Descriere">${escapeHTML(leiras)}</td>
           <td data-label="Kg">${escapeHTML(kg)}</td>
           <td data-label="Preț/balot" class="price ${promo ? 'promo-price' : ''}">
-            ${discount ? `<span class="old-price">${escapeHTML(oldPrice)} RON</span>` : ''}
-            ${escapeHTML(pretBalot)}
-            ${discount ? `<span class="discount">−${percentage}%</span>` : ''}
+            ${validDiscount ? `<span class="old-price">${escapeHTML(oldPrice)} RON</span>` : ''}
+            ${escapeHTML(arBala)}
+            ${validDiscount ? `<span class="discount">−${percentage}%</span>` : ''}
           </td>
-          <td data-label="Preț/kg" class="price">${escapeHTML(pretKg)}</td>`;
-        (promo ? promoTable : tableBody).appendChild(tr);
+          <td data-label="Preț/kg" class="price">${escapeHTML(arKg)}</td>`;
+        categoryTables[category].appendChild(tr);
       });
+      window.missingCategory = missingCategory;
       applySearch();
     }
+
     function applySearch() {
-      const query = searchInput.value.toLowerCase().trim();
-      let count = 0, promos = 0, regulars = 0;
-      document.querySelectorAll(".product-row").forEach(row => {
-        const visible = row.dataset.search.includes(query);
-        row.style.display = visible ? "" : "none";
-        if (visible) {
-          count++;
-          if (row.parentElement === promoTable) promos++;
-          else regulars++;
-        }
+      const query = searchInput.value.toLocaleLowerCase().trim();
+      let total = 0;
+      Object.entries(categoryTables).forEach(([category, table]) => {
+        let visible = 0;
+        table.querySelectorAll(".product-row").forEach(row => {
+          const matches = row.dataset.search.includes(query);
+          row.hidden = !matches;
+          if (matches) visible++;
+        });
+        document.getElementById(category + "Section").hidden = visible === 0;
+        document.getElementById("nav-" + category).hidden = visible === 0;
+        total += visible;
       });
-      promoSection.hidden = promos === 0;
-      regularHeading.hidden = regulars === 0;
-      statusBox.style.display = count ? "none" : "block";
-      statusBox.textContent = count ? "" : "Nu există rezultate pentru această căutare.";
+      statusBox.style.display = total || !window.missingCategory ? (total ? "none" : "block") : "block";
+      if (total) {
+        statusBox.textContent = window.missingCategory ? ("Atenție: "+ window.missingCategory + " produse active nu au categoria completată corect.") : "";
+        statusBox.style.display = window.missingCategory ? "block" : "none";
+      } else {
+        statusBox.textContent = "Nu există produse afișabile. Verificați coloana Kategoria sau căutarea.";
+      }
     }
 
     async function loadPrices() {
