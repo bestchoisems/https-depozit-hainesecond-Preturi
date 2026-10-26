@@ -1,29 +1,21 @@
-name: Update prices CSV
 
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: "17 * * * *"
+- name: Commit updated CSV
+  run: |
+    git config user.name "github-actions"
+    git config user.email "github-actions@github.com"
 
-permissions:
-  contents: write
+    cp prices.csv /tmp/prices.csv
 
-jobs:
-  update:
-    runs-on: ubuntu-latest
+    git fetch origin main
+    git reset --hard origin/main
 
-    steps:
-      - uses: actions/checkout@v5
+    cp /tmp/prices.csv prices.csv
+    git add prices.csv
 
-      - name: Download Google Sheets CSV
-        run: |
-          curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5bjWev7GFUm1nt7yxveY8iozWNzRu4-kYX1bi4dsMLmoDjlxXAon8amxoYpaREQylNFu2Eh4Q_IYU/pub?gid=0&single=true&output=csv" -o prices.csv
+    if git diff --cached --quiet; then
+      echo "No price changes"
+      exit 0
+    fi
 
-      - name: Commit updated CSV
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add prices.csv
-          git commit -m "Update prices CSV" || exit 0
-          git pull --rebase origin main
-          git push origin main
+    git commit -m "Update prices CSV"
+    git push origin main
