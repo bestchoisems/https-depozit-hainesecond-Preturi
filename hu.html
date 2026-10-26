@@ -158,6 +158,15 @@
       font-weight: 900;
       white-space: nowrap;
     }
+    html { scroll-behavior: smooth; }
+    .quick-nav { display:flex; flex-wrap:wrap; gap:10px; margin:18px 0; }
+    .quick-nav a { flex:1; min-width:170px; padding:14px 10px; text-align:center;
+      border-radius:12px; background:#111; color:#d8a84f; text-decoration:none;
+      font-weight:800; border:1px solid #b8892f; }
+    .quick-nav a:hover { background:#3b2a11; }
+    .category-section { margin:24px 0; scroll-margin-top:15px; }
+    .category-heading { font-size:22px; margin:0 0 12px; }
+    [hidden] { display:none !important; }
     .promo-section { margin: 20px 0; }
     .promo-heading { font-size: 23px; margin: 0 0 12px; color: #a3221c; }
     .promo-row { background: #fff4ed; }
@@ -278,29 +287,29 @@
 
     <div id="status" class="message">Árlista betöltése...</div>
 
-    <section id="promoSection" class="promo-section" hidden>
-      <h2 class="promo-heading">🔥 AKCIÓS AJÁNLATOK</h2>
-      <div class="table-card"><table aria-label="Akciós termékek">
-        <thead><tr><th>Termék</th><th>Termék leírás</th><th>Kg</th><th>Ár/bála</th><th>Ár/kg</th></tr></thead>
-        <tbody id="promoTable"></tbody>
+    <nav class="quick-nav" aria-label="Ugrás a kategóriákhoz">
+      <a id="nav-promo" href="#promoSection">🔥 Akciók</a>
+      <a id="nav-winter" href="#winterSection">🍂 Ősz / tél</a>
+      <a id="nav-summer" href="#summerSection">☀️ Tavasz / nyár</a>
+    </nav>
+    <section id="promoSection" class="category-section" hidden>
+      <h2 class="category-heading promo-heading">🔥 AKCIÓS AJÁNLATOK</h2>
+      <div class="table-card"><table aria-label="🔥 AKCIÓS AJÁNLATOK">
+        <thead><tr><th>Termék</th><th>Termék leírás</th><th>Kg</th><th>Ár/bála</th><th>Ár/kg</th></tr></thead><tbody id="promoTable"></tbody>
       </table></div>
     </section>
-    <h2 id="regularHeading" style="font-size:21px;margin:18px 0 12px">ÁRLISTA</h2>
-    <section class="table-card">
-      <table aria-label="Használt ruha nagykereskedelmi árlista">
-        <thead>
-          <tr>
-            <th>Termék</th>
-            <th>Termék leírás</th>
-            <th>Kg</th>
-            <th>Ár/bála</th>
-            <th>Ár/kg</th>
-          </tr>
-        </thead>
-        <tbody id="priceTable"></tbody>
-      </table>
+    <section id="winterSection" class="category-section" hidden>
+      <h2 class="category-heading">🍂 ŐSZI / TÉLI RUHÁZAT</h2>
+      <div class="table-card"><table aria-label="🍂 ŐSZI / TÉLI RUHÁZAT">
+        <thead><tr><th>Termék</th><th>Termék leírás</th><th>Kg</th><th>Ár/bála</th><th>Ár/kg</th></tr></thead><tbody id="winterTable"></tbody>
+      </table></div>
     </section>
-
+    <section id="summerSection" class="category-section" hidden>
+      <h2 class="category-heading">☀️ TAVASZI / NYÁRI RUHÁZAT</h2>
+      <div class="table-card"><table aria-label="☀️ TAVASZI / NYÁRI RUHÁZAT">
+        <thead><tr><th>Termék</th><th>Termék leírás</th><th>Kg</th><th>Ár/bála</th><th>Ár/kg</th></tr></thead><tbody id="summerTable"></tbody>
+      </table></div>
+    </section>
     <footer class="footer">
       <strong>UNIQUE TEXTIL Kft</strong><br>
       Tel: <a href="tel:+36705668292">+36 70 566 8292</a><br>
@@ -381,14 +390,18 @@
         .replaceAll("'", "&#039;");
     }
 
-    const promoTable = document.getElementById("promoTable");
-    const promoSection = document.getElementById("promoSection");
-    const regularHeading = document.getElementById("regularHeading");
-
-    function isPromo(value) {
-      return ["igen", "yes", "da", "true", "1", "x"].includes(String(value || "").trim().toLowerCase());
+    const categoryTables = {
+      promo: document.getElementById("promoTable"),
+      winter: document.getElementById("winterTable"),
+      summer: document.getElementById("summerTable")
+    };
+    function categoryOf(value) {
+      const v = normalizeHeader(value).replace(/[\s_\-/]+/g, "");
+      if (["promo", "promocio", "promotii", "akcio", "akciok"].includes(v)) return "promo";
+      if (["osztel", "oszitel", "toamnaiarna", "winter", "autumnwinter"].includes(v)) return "winter";
+      if (["tavasznyar", "tavaszinyari", "primavaravara", "summer", "springsummer"].includes(v)) return "summer";
+      return "";
     }
-
     function priceNumber(value) {
       const raw = String(value ?? "").replace(/\s/g, "").replace(/[^0-9,.-]/g, "");
       if (!raw) return NaN;
@@ -397,25 +410,26 @@
       if (comma >= 0) return Number(raw.replace(",", "."));
       return Number(raw);
     }
-
     function renderRows(items) {
-      tableBody.innerHTML = "";
-      promoTable.innerHTML = "";
+      Object.values(categoryTables).forEach(table => table.innerHTML = "");
+      let missingCategory = 0;
       items.filter(item => isActive(getValue(item, ["aktiv", "active"]))).forEach(item => {
         const termek = getValue(item, ["hu termék", "hu termek", "termék", "termek"]);
         const leiras = getValue(item, ["hu leírás", "hu leiras", "leírás", "leiras"]);
-        if (!termek && !leiras) return;
-        const kg = getValue(item, ["kg"]);
         const arBala = getValue(item, ["ár/bála", "ar/bala", "ár bála", "ar bala"]);
         const arKg = getValue(item, ["ár/kg", "ar/kg", "ár kg", "ar kg"]);
-        const promo = isPromo(getValue(item, ["promo"]));
         const oldPrice = getValue(item, ["régi ár huf", "regi ar huf"]);
+        if (!termek && !leiras) return;
+        const kg = getValue(item, ["kg"]);
+        const category = categoryOf(getValue(item, ["kategoria", "kategória", "category"]));
+        if (!category) { missingCategory++; return; }
+        const promo = category === "promo";
         const old = priceNumber(oldPrice), current = priceNumber(arBala);
         const validDiscount = promo && Number.isFinite(old) && Number.isFinite(current) && old > current && current >= 0;
         const percentage = validDiscount ? Math.round((old - current) / old * 100) : 0;
         const tr = document.createElement("tr");
         tr.className = "product-row" + (promo ? " promo-row" : "");
-        tr.dataset.search = `${termek} ${leiras}`.toLowerCase();
+        tr.dataset.search = `${termek} ${leiras}`.toLocaleLowerCase();
         tr.innerHTML = `
           <td data-label="Termék" class="product-name">${escapeHTML(termek)}${promo ? '<span class="promo-tag">AKCIÓ</span>' : ''}</td>
           <td data-label="Leírás">${escapeHTML(leiras)}</td>
@@ -426,27 +440,33 @@
             ${validDiscount ? `<span class="discount">−${percentage}%</span>` : ''}
           </td>
           <td data-label="Ár/kg" class="price">${escapeHTML(arKg)}</td>`;
-        (promo ? promoTable : tableBody).appendChild(tr);
+        categoryTables[category].appendChild(tr);
       });
+      window.missingCategory = missingCategory;
       applySearch();
     }
 
     function applySearch() {
-      const query = searchInput.value.toLowerCase().trim();
-      let count = 0, promos = 0, regulars = 0;
-      document.querySelectorAll(".product-row").forEach(row => {
-        const visible = row.dataset.search.includes(query);
-        row.style.display = visible ? "" : "none";
-        if (visible) {
-          count++;
-          if (row.parentElement === promoTable) promos++;
-          else regulars++;
-        }
+      const query = searchInput.value.toLocaleLowerCase().trim();
+      let total = 0;
+      Object.entries(categoryTables).forEach(([category, table]) => {
+        let visible = 0;
+        table.querySelectorAll(".product-row").forEach(row => {
+          const matches = row.dataset.search.includes(query);
+          row.hidden = !matches;
+          if (matches) visible++;
+        });
+        document.getElementById(category + "Section").hidden = visible === 0;
+        document.getElementById("nav-" + category).hidden = visible === 0;
+        total += visible;
       });
-      promoSection.hidden = promos === 0;
-      regularHeading.hidden = regulars === 0;
-      statusBox.style.display = count ? "none" : "block";
-      statusBox.textContent = count ? "" : "Nincs találat erre a keresésre.";
+      statusBox.style.display = total || !window.missingCategory ? (total ? "none" : "block") : "block";
+      if (total) {
+        statusBox.textContent = window.missingCategory ? ("Figyelem: "+ window.missingCategory + " aktív terméknél nincs érvényes Kategoria megadva.") : "";
+        statusBox.style.display = window.missingCategory ? "block" : "none";
+      } else {
+        statusBox.textContent = "Nincs megjeleníthető termék. Ellenőrizd a Kategoria oszlopot vagy a keresést.";
+      }
     }
 
     async function loadPrices() {
