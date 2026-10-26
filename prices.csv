@@ -1,11 +1,13 @@
 HU termék,HU leírás,RO produs,RO descriere,kg, ár/bála, ár/kg, preț/balot, preț/kg,Aktiv,Kategoria,Régi ár HUF,Régi ár RON,szamolas
+Férfi póló,"Pamut férfi póló, kerek nyakú",Tricouri bărbați,"Tricouri bărbați din bumbac, la baza gâtului",45,62 000 Ft,1 378 Ft,1 250 RON,28 RON,Igen,Primavara/Vara,,,87 466
 Férfi póló XXL,"Nagy méretű, pamut férfi póló, kerek nyakú",Tricouri bărbați XXL,"Tricouri bărbați din bumbac, mărime mare, la baza gâtului",45,62 000 Ft,1 378 Ft,890 RON,20 RON,Igen,Primavara/Vara,,,62 275
 Mix póló - férfi,Vegyes férfi póló: pamut és szintetikus,Tricouri mix -bărbați,Tricouri bărbați din amestec de materiale (bumbac și sintetic),45,58 000 Ft,1 289 Ft,820 RON,18 RON,Igen,Primavara/Vara,,,57 377
-Női póló XXL,"Nagy méretű, vegyes pamut női póló",Tricou Golf bărbați,"Tricou polo bărbați din bumbac, cu guler și trei nasturi",45,45 000 Ft,1 000 Ft,650 RON,14 RON,Igen,Primavara/Vara,,,45 482
-Női póló normál,Normál- kisméretű pamut női póló,Tricou damă XXL,"Tricou de damă, mărime mare, din bumbac",45,45 000 Ft,1 000 Ft,650 RON,14 RON,Igen,Primavara/Vara,,,45 482
-Golf póló,"Galléros, háromgombos férfi póló",Tricou damă normal,"Tricou de damă, mărime normală/mică, bumbac",45,45 000 Ft,1 000 Ft,650 RON,14 RON,Igen,Primavara/Vara,,,45 482
+Golf póló,"Galléros, háromgombos férfi póló",Tricou Golf bărbați,"Tricou polo bărbați din bumbac, cu guler și trei nasturi",45,45 000 Ft,1 000 Ft,650 RON,14 RON,Igen,Primavara/Vara,,,45 482
+Női póló XXL,"Nagy méretű, vegyes pamut női póló",Tricou damă XXL,"Tricou de damă, mărime mare, din bumbac",45,45 000 Ft,1 000 Ft,650 RON,14 RON,Igen,Primavara/Vara,,,45 482
+Női póló normál,Normál- kisméretű pamut női póló,Tricou damă normal,"Tricou de damă, mărime normală/mică, bumbac",45,45 000 Ft,1 000 Ft,650 RON,14 RON,Igen,Primavara/Vara,,,45 482
 Férfi póló L/S,Hosszú ujjú pamut férfi póló,Tricou bărbați L/S,"Tricouri bărbați din bumbac, cu mânecă lungă",45,45 000 Ft,1 000 Ft,650 RON,14 RON,Igen,Toamna/Iarna,,,45 482
 Pamut short,Pamut rövidnadrág (férfi és női),Șort din bumbac,"Pantaloni scurți din bumbac, damă și bărbați",45,49 000 Ft,1 089 Ft,720 RON,16 RON,Igen,Primavara/Vara,,,50 380
+Pamut short XXL,Nagy méretű pamut rövidnadrág (férfi és női),Șort din bumbac XXL,"Pantaloni scurți din bumbac, damă și bărbați, mărimi mari",45,49 000 Ft,1 089 Ft,720 RON,16 RON,Igen,Primavara/Vara,,,50 380
 Short XXL,"Nagy méretű férfi rövidnadrág, vegyes összetétel",Șort XXL,"Pantaloni scurți bărbați, mărime mare, din diverse materiale",45,46 000 Ft,1 022 Ft,650 RON,14 RON,Igen,Primavara/Vara,,,45 482
 Női póló L/S,Hosszú ujjú pamut női póló,Bluze damă L/S,BLUZE DAMĂ CU MÂNECĂ LUNGĂ,45,47 000 Ft,1 044 Ft,670 RON,15 RON,Igen,Promo,49 000 Ft,720 RON,46 882
 Velur nadrág,Női velúr nadrág,Pantaloni din velur,Pantaloni de damă din velur (catifea plușată),45,44 000 Ft,978 Ft,610 RON,14 RON,Igen,Toamna/Iarna,,,42 683
@@ -16,7 +18,8 @@ Indiai ruha,Indiai stílusú ruha,Haine indiene,Haine indiene de vara,45,34 000
 Polár felső,"Felnőtt polár felső, kerek nyakkivágással",Polar,Bluză polar pentru adulți,45,24 000 Ft,533 Ft,350 RON,8 RON,Igen,Promo,31 000 Ft,450 RON,24 490
 Polár felső nagy méret,"Felnőtt polár felső, kerek nyakkivágással",Polar XXL,"Bluză polar pentru adulți, mărime mare",45,35 000 Ft,778 Ft,500 RON,11 RON,Igen,Toamna/Iarna,,,34 986
 Kapucnis XXL,"Nagy méretű, pamut kapucnis felső",Hanorac XXL,"Hanorac cu glugă din bumbac, mărime mare",45,39 000 Ft,867 Ft,550 RON,12 RON,Igen,Promo,49 000 Ft,700 RON,38 485
-Bundás kapucnis,Bélelt kapucnis felső,Hanorac îmblănit,Hanorac cu glugă căptușit/îmblănit,45,39 000 Ft,867 Ft,550 RON,12 RON,Nem,Promo,49 000 Ft,700 RON,38 485
+Kapucnis XXL (zsákos),"Nagy méretű, pamut kapucnis felső (zsákos)",Hanorac XXL (sac),"Hanorac cu glugă din bumbac, mărime mare (sac)",25,32 000 Ft,1 280 Ft,460 RON,18 RON,Igen,Toamna/Iarna,,,32 187
+Bundás kapucnis (zsákos),Bélelt kapucnis felső (zsákos),Hanorac îmblănit (sac),Hanorac cu glugă căptușit/îmblănit (sac),25,28 000 Ft,1 120 Ft,400 RON,16 RON,Igen,Toamna/Iarna,,,27 989
 Kapucnis,Felnőtt pamut kapucnis felső,Hanorac,"Hanorac cu glugă din bumbac pentru adulți, mărime normală",45,45 000 Ft,1 000 Ft,650 RON,14 RON,Igen,Toamna/Iarna,,,45 482
 Polár mellény,Polár mellény,Vestă polar,Vestă din polar,45,57 500 Ft,1 278 Ft,820 RON,18 RON,Igen,Toamna/Iarna,,,57 377
 Polár mellény D,Polár mellény D,Vestă polar D,Vestă din polar D,40,39 000 Ft,975 Ft,530 RON,13 RON,Igen,Toamna/Iarna,,,37 085
@@ -26,7 +29,7 @@ Jogging top XXL,Nagy méretű pamut szabadidő felső,Bluză trening XXL,"Bluză
 Spandex anorak,"Dzseki, sportos széldzseki",Anorac spandex,Geacă sport / windbreaker,45,55 000 Ft,1 222 Ft,790 RON,18 RON,Igen,Promo,65 000 Ft,990 RON,55 278
 Fürdőköpeny,Fürdőköpeny,Halat de baie,Halat de baie,45,45 000 Ft,1 000 Ft,650 RON,14 RON,Igen,Toamna/Iarna,,,45 482
 Női pulóver,Női pulóver,Pulovere femei,Pulovere femei,45,47 000 Ft,1 044 Ft,670 RON,15 RON,Igen,Promo,49 000 Ft,720 RON,46 882
-Favágó ing,"Férfi, kockás, bélelt favágó ing",Cămăși groși,"Cămăși bărbați groși în carouri, căptușită",45,52 500 Ft,1 167 Ft,750 RON,17 RON,Igen,Toamna/Iarna,,,52 479
+Favágó ing,"Férfi, bélelt favágó ing",Cămăși groși,Cămăși bărbați groși,45,52 500 Ft,1 167 Ft,750 RON,17 RON,Igen,Toamna/Iarna,,,52 479
 Gyerek also,Gyerek melegítőalsó,Pantaloni trening copii,Pantaloni de trening pentru copii,45,42 000 Ft,933 Ft,600 RON,13 RON,Igen,Toamna/Iarna,,,41 983
 Halloween,Jelmez,Halloween,Costum de carnaval,45,41 000 Ft,911 Ft,590 RON,13 RON,Igen,Toamna/Iarna,,,41 284
 Vastag jéger,Vastag jéger alsó,Egări groși,Egări femei groși,45,55 000 Ft,1 222 Ft,790 RON,18 RON,Igen,Toamna/Iarna,,,55 278
@@ -34,6 +37,18 @@ Jogging pant,Felnőtt melegítőalsó,Pantaloni trening,"Pantaloni de trening pe
 Jogging pant 2,"Felnőtt melegítőalsó, II. osztály",Pantaloni trening 2,"Pantaloni de trening pentru adulți, bumbac, calit 2",45,51 000 Ft,1 133 Ft,730 RON,16 RON,Igen,Toamna/Iarna,,,51 080
 Selyem alsó,Selyem melegítő alsó,Pantaloni fâș,Pantaloni de trening din fâș / sintetic,45,59 000 Ft,1 311 Ft,850 RON,19 RON,Nem,Toamna/Iarna,,,59 477
 Selyem alsó nagy,Selyem melegítő alsó nagy méretű,Pantaloni fâș mari,"Pantaloni de trening din fâș / sintetic, mărime mare",45,59 000 Ft,1 311 Ft,850 RON,19 RON,Nem,Toamna/Iarna,,,59 477
+Selyem melegítő,Selyem melegítő,Trening sintetic,Trening sintetic,30,42 000 Ft,1 400 Ft,600 RON,20 RON,Igen,Toamna/Iarna,,,41 983
 Medical,Egészségügyi munkaruha,Medical,Îmbrăcăminte de lucru pentru personal medical,45,42 000 Ft,933 Ft,590 RON,13 RON,Igen,Toamna/Iarna,,,41 284
-Sport XXL,"Férfi és női sport ruházat, nagy méretben",Sport XXL,"Îmbrăcăminte sport pentru bărbați și femei, mărimi mari",40,47 000 Ft,1 175 Ft,690 RON,17 RON,Igen,Toamna/Iarna,,,48 281
-MIX XXL,"Férfi&női vegyes ruházat, nagy méretben-Zsák",MIX XXL,"Îmbrăcăminte mixtă bărbați și femei, mărimi mari–sac",35,45 000 Ft,1 286 Ft,650 RON,19 RON,Igen,Toamna/Iarna,,,45 482
+Sport XXL,"Férfi és női sport ruházat, nagy méretben",Sport XXL,"Îmbrăcăminte sport pentru bărbați și femei, mărimi mari",40,47 000 Ft,1 175 Ft,690 RON,17 RON,Igen,Primavara/Vara,,,48 281
+MIX XXL,"Férfi&női vegyes ruházat, nagy méretben-Zsák",MIX XXL,"Îmbrăcăminte mixtă bărbați și femei, mărimi mari–sac",35,45 000 Ft,1 286 Ft,650 RON,19 RON,Igen,Primavara/Vara,,,45 482
+Pamutnadrág,Vékony pamutnadrág,Pantaloni din bumbac subțire,Pantaloni subțiri din bumbac,45,44 000 Ft,978 Ft,630 RON,14 RON,Igen,Primavara/Vara,,,44 083
+3/4-es pamutnadrág,"Vékony pamutnadrág, háromnegyedes szárhosszúsággal",Pantaloni 3/4 din bumbac,"Pantaloni subțiri din bumbac, cu lungime trei sferturi",45,44 000 Ft,978 Ft,630 RON,14 RON,Igen,Primavara/Vara,,,44 083
+3/4-es jóganadrág,"Testhezálló, rugalmas, háromnegyedes női sportnadrág",Colanți yoga 3/4,"Colanți elastici pentru damă, lungime 3/4, potriviți pentru yoga și sport",45,57 000 Ft,1 267 Ft,820 RON,18 RON,Igen,Primavara/Vara,,,57 377
+Női blúz és ing,"Elegáns szabású női blúz és ing, változatos modellekben",Bluze și cămăși elegante damă din bumbac,"Bluze și cămăși de damă, modele variate",45,59 000 Ft,1 311 Ft,840 RON,19 RON,Igen,Primavara/Vara,,,58 777
+Női blúz és ing XXL,"Nagy méretű, elegáns szabású női blúz és ing, változatos modellekben",Bluze și cămăși elegante damă mărimi mari,Bluze și cămăși de damă mărimi mari,45,47 000 Ft,1 044 Ft,670 RON,15 RON,Igen,Primavara/Vara,,,46 882
+Fürdőruha,Női egyrészes fürdőruhák,Costume de baie damă,Costume de baie întregi pentru femei,45,44 000 Ft,978 Ft,620 RON,14 RON,Igen,Primavara/Vara,,,43 383
+Kesztyű,"Vegyes kesztyűk, zsákos kiszerelésben",Mănuși mixte,"Mănuși diverse, ambalate la sac",18,31 500 Ft,1 750 Ft,450 RON,25 RON,Igen,Toamna/Iarna,,,31 488
+Férfi nadrág XXL (100 db),"Nagy méretű férfinadrágok, vegyes modellek (100 dbos)",Pantaloni bărbați XXL (100 buc),"Pantaloni pentru bărbați, mărimi mari, modele variate (100 buc)",65,43 000 Ft,662 Ft,610 RON,9 RON,Igen,Toamna/Iarna,,,42 683
+Sí nadrág,Sí nadrág,Pantaloni de schi,Pantaloni de schi,45,43 000 Ft,956 Ft,610 RON,14 RON,Igen,Toamna/Iarna,,,42 683
+Zokni,Zokni,Șosete,Șosete,45,64 000 Ft,1 422 Ft,920 RON,20 RON,Igen,Toamna/Iarna,,,64 375
+Zokni - vastag,Zokni - vastag,Șosete groase,Șosete groase,45,56 000 Ft,1 244 Ft,800 RON,18 RON,Igen,Toamna/Iarna,,,55 978
