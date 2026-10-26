@@ -390,6 +390,14 @@
       if (["tavasznyar", "tavaszinyari", "primavaravara", "summer", "springsummer"].includes(v)) return "summer";
       return "";
     }
+    function priceNumber(value) {
+      const raw = String(value ?? "").replace(/\s/g, "").replace(/[^0-9,.-]/g, "");
+      if (!raw) return NaN;
+      const comma = raw.lastIndexOf(","), dot = raw.lastIndexOf(".");
+      if (comma >= 0 && dot >= 0) return Number(raw.replace(comma > dot ? /\./g : /,/g, "").replace(",", "."));
+      if (comma >= 0) return Number(raw.replace(",", "."));
+      return Number(raw);
+    }
     function renderRows(items) {
       Object.values(categoryTables).forEach(table => table.innerHTML = "");
       let missingCategory = 0;
