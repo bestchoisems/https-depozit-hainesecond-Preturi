@@ -105,6 +105,32 @@ td::before{content:attr(data-label);display:block;margin-bottom:4px;color:var(--
   }
 }
 
+/* Videógombok egységes igazítása asztali nézetben */
+@media (min-width: 761px) {
+
+  td.product-name {
+    position: relative;
+    padding-right: 125px;
+    white-space: normal;
+  }
+
+  td.product-name .video-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    padding: 6px 9px;
+    font-size: 11px;
+    white-space: nowrap;
+    box-shadow: none;
+  }
+
+  td.product-name .video-button:hover {
+    transform: translateY(-50%);
+  }
+}
+
 </style>
 </head>
 <body>
