@@ -79,6 +79,32 @@ td::before{content:attr(data-label);display:block;margin-bottom:4px;color:var(--
 .price{font-size:16px}
 .video-button{width:100%;margin-top:12px;padding:14px;font-size:15px}
 }
+  
+/* Videógomb: asztali nézetben ne növelje a sor magasságát */
+@media (min-width: 761px) {
+  td.product-name {
+    white-space: nowrap;
+  }
+
+  .video-button {
+    display: inline-flex;
+    vertical-align: middle;
+    width: auto;
+    margin: 0 0 0 10px;
+    padding: 6px 10px;
+    font-size: 11px;
+    line-height: 1.1;
+    border-radius: 7px;
+    box-shadow: none;
+    white-space: nowrap;
+  }
+
+  .video-button svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
 </style>
 </head>
 <body>
