@@ -259,6 +259,51 @@
       .product-name::before { color: var(--gold); }
       .price { font-size: 16px; }
     }
+
+    /* Videó gomb: asztali nézetben egy sorban a terméknévvel */
+    .video-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-left: 9px;
+      padding: 6px 9px;
+      background: #d51f19;
+      color: white;
+      border: 0;
+      border-radius: 7px;
+      font: 800 11px Arial, sans-serif;
+      line-height: 1.1;
+      white-space: nowrap;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+    .video-button:hover { background: #a91612; }
+    .video-button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+    .video-button svg { width: 13px; height: 13px; fill: currentColor; }
+    @media (min-width: 761px) {
+      td.product-name { white-space: nowrap; }
+      .video-button { margin-top: 0; margin-bottom: 0; }
+    }
+    @media (max-width: 760px) {
+      .video-button { display: flex; margin: 10px 0 0; padding: 12px 14px; font-size: 14px; }
+      .video-button svg { width: 16px; height: 16px; }
+    }
+    .video-modal {
+      position: fixed; inset: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; background: rgba(0,0,0,.88);
+    }
+    .video-dialog { width: min(100%, 450px); position: relative; }
+    .video-close {
+      position: absolute; top: -46px; right: 0; padding: 8px 13px;
+      border: 0; border-radius: 8px; background: white;
+      font-size: 20px; cursor: pointer;
+    }
+    .video-frame { aspect-ratio: 9/16; max-height: 78vh; background: black; border-radius: 12px; overflow: hidden; }
+    .video-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
+    .video-external { text-align: center; margin: 12px 0 0; }
+    .video-external a { color: white; font-weight: bold; }
   </style>
 </head>
 
@@ -318,6 +363,15 @@
     </footer>
   </main>
 
+  <div id="videoModal" class="video-modal" role="dialog" aria-modal="true" aria-label="Termékvideó" hidden>
+    <div class="video-dialog">
+      <button type="button" class="video-close" id="closeVideo" aria-label="Videó bezárása">✕</button>
+      <div class="video-frame">
+        <iframe id="videoFrame" title="Termékvideó" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+      <p class="video-external"><a id="videoExternal" href="#" target="_blank" rel="noopener noreferrer">Megnyitás a YouTube-on</a></p>
+    </div>
+  </div>
   <script>
     const CSV_URL = "prices.csv";
     const tableBody = document.getElementById("priceTable");
@@ -410,6 +464,25 @@
       if (comma >= 0) return Number(raw.replace(",", "."));
       return Number(raw);
     }
+    function youtubeId(value) {
+      try {
+        const url = new URL(String(value || "").trim());
+        if (url.protocol !== "https:") return "";
+        const host = url.hostname.toLowerCase();
+        const parts = url.pathname.split("/").filter(Boolean);
+        let id = "";
+        if (["youtu.be", "www.youtu.be"].includes(host)) {
+          id = parts[0] || "";
+        } else if (["youtube.com", "www.youtube.com", "m.youtube.com"].includes(host)) {
+          if (parts[0] === "watch") id = url.searchParams.get("v") || "";
+          if (["shorts", "embed", "live"].includes(parts[0])) id = parts[1] || "";
+        }
+        return /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : "";
+      } catch {
+        return "";
+      }
+    }
+
     function renderRows(items) {
       Object.values(categoryTables).forEach(table => table.innerHTML = "");
       let missingCategory = 0;
@@ -427,11 +500,12 @@
         const old = priceNumber(oldPrice), current = priceNumber(arBala);
         const validDiscount = promo && Number.isFinite(old) && Number.isFinite(current) && old > current && current >= 0;
         const percentage = validDiscount ? Math.round((old - current) / old * 100) : 0;
+        const video = youtubeId(getValue(item, ["video", "videó", "youtube", "video url"]));
         const tr = document.createElement("tr");
         tr.className = "product-row" + (promo ? " promo-row" : "");
         tr.dataset.search = `${termek} ${leiras}`.toLocaleLowerCase();
         tr.innerHTML = `
-          <td data-label="Termék" class="product-name">${escapeHTML(termek)}${promo ? '<span class="promo-tag">AKCIÓ</span>' : ''}</td>
+          <td data-label="Termék" class="product-name">${escapeHTML(termek)}${promo ? '<span class="promo-tag">AKCIÓ</span>' : ''}${video ? `<button type="button" class="video-button" data-video-id="${video}" aria-label="Videó megtekintése: ${escapeHTML(termek)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg> VIDEÓ</button>` : ''}</td>
           <td data-label="Leírás">${escapeHTML(leiras)}</td>
           <td data-label="Kg">${escapeHTML(kg)}</td>
           <td data-label="Ár/bála" class="price ${promo ? 'promo-price' : ''}">
@@ -501,6 +575,42 @@
         statusBox.textContent = "Az árlista nem tölthető be. Ellenőrizd, hogy a prices.csv az index.html mellett van-e.";
       }
     }
+
+    const videoModal = document.getElementById("videoModal");
+    const videoFrame = document.getElementById("videoFrame");
+    const videoExternal = document.getElementById("videoExternal");
+    const closeVideoButton = document.getElementById("closeVideo");
+    let previousFocus = null;
+
+    function openVideo(id) {
+      previousFocus = document.activeElement;
+      videoExternal.href = "https://www.youtube.com/watch?v=" + id;
+      videoFrame.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&playsinline=1&rel=0";
+      videoModal.hidden = false;
+      document.body.style.overflow = "hidden";
+      closeVideoButton.focus();
+    }
+
+    function closeVideo() {
+      videoModal.hidden = true;
+      videoFrame.removeAttribute("src");
+      document.body.style.overflow = "";
+      if (previousFocus && previousFocus.isConnected) previousFocus.focus();
+    }
+
+    document.addEventListener("click", function(event) {
+      const button = event.target.closest(".video-button");
+      if (button) openVideo(button.dataset.videoId);
+      else if (event.target === videoModal || event.target === closeVideoButton) closeVideo();
+    });
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape" && !videoModal.hidden) closeVideo();
+      if (event.key === "Tab" && !videoModal.hidden) {
+        const first = closeVideoButton, last = videoExternal;
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    });
 
     searchInput.addEventListener("input", applySearch);
     loadPrices();
