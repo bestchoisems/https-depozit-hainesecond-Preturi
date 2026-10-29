@@ -9,7 +9,7 @@ header{background:linear-gradient(115deg,#111,#3b2a11);color:white;padding:34px 
 h1{margin:0;font-size:clamp(26px,4vw,42px)}header p{color:#ead19d;margin-bottom:0}
 nav{margin:22px 0;display:flex;gap:12px;flex-wrap:wrap}nav a{background:#161616;color:#e7ba65;padding:12px 17px;border-radius:10px;text-decoration:none;font-weight:bold}
 .search{width:100%;padding:15px 16px;border:1px solid #d6d0c4;border-radius:12px;font-size:16px;margin-bottom:18px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.section{margin-top:27px}.section h2{font-size:23px;margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid #dec68d}.section .count{font-size:14px;color:#777;font-weight:normal;margin-left:8px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
 .card{background:white;border:1px solid #e6e0d5;border-radius:16px;padding:20px;box-shadow:0 4px 16px #0000000a;display:flex;flex-direction:column;gap:12px}
 .card h2{font-size:20px;margin:0}.card p{margin:0;color:#555;line-height:1.5;flex:1}
 .watch{display:inline-block;text-align:center;background:var(--red);color:white;text-decoration:none;border-radius:9px;padding:13px 14px;font-weight:800}
@@ -19,18 +19,37 @@ footer{margin-top:35px;text-align:center;color:#666;font-size:14px}
 <header><h1>🎬 Videoclipuri produse</h1><p>Descoperă articolele disponibile prin videoclipuri reale. Actualizare automată din lista de prețuri.</p></header>
 <nav><a href="/">← Lista de prețuri</a><a href="https://depozit-hainesecond.ro/">Site principal</a></nav>
 <input id="search" class="search" type="search" placeholder="🔎 Caută un produs..." aria-label="Caută un produs">
-<p id="status" class="notice">Se încarcă videoclipurile...</p><div id="grid" class="grid"></div>
+<p id="status" class="notice">Se încarcă videoclipurile...</p><div id="sections"></div>
 <footer>UNIQUE TEXTIL · Videoclipurile se deschid pe YouTube.</footer>
 </main><script>
 const CSV_URL="prices.csv";
-const grid=document.getElementById("grid"),status=document.getElementById("status"),search=document.getElementById("search");
+const sections=document.getElementById("sections"),status=document.getElementById("status"),search=document.getElementById("search");
 let products=[];
 function norm(s){return String(s??"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ")}
 function field(r,keys){for(const k of keys){if(r[norm(k)]!==undefined)return String(r[norm(k)]??"").trim()}return ""}
 function parseCSV(s){let rows=[],row=[],cell="",quoted=false;for(let i=0;i<s.length;i++){const c=s[i];if(c==='"'){if(quoted&&s[i+1]==='"'){cell+='"';i++}else quoted=!quoted}else if(c===","&&!quoted){row.push(cell);cell=""}else if((c==="\r"||c==="\n")&&!quoted){if(c==="\r"&&s[i+1]==="\n")i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell=""}else cell+=c}row.push(cell);if(row.some(x=>x.trim()))rows.push(row);return rows}
 function ytId(raw){try{const u=new URL(raw);if(u.protocol!=="https:")return "";const host=u.hostname.toLowerCase(),p=u.pathname.split("/").filter(Boolean);let id="";if(["youtu.be","www.youtu.be"].includes(host))id=p[0]||"";else if(["youtube.com","www.youtube.com","m.youtube.com"].includes(host)){if(p[0]==="watch")id=u.searchParams.get("v")||"";else if(["shorts","embed","live"].includes(p[0]))id=p[1]||""}return /^[\w-]{11}$/.test(id)?id:""}catch{return ""}}
 function active(v){const s=norm(v);return !s||["da","yes","igen","true","1","aktiv","active","x"].includes(s)}
-function render(){const q=norm(search.value);const filtered=products.filter(x=>norm(x.name+" "+x.desc).includes(q));grid.replaceChildren();for(const p of filtered){const card=document.createElement("article");card.className="card";const title=document.createElement("h2");title.textContent=p.name;const desc=document.createElement("p");desc.textContent=p.desc;const a=document.createElement("a");a.className="watch";a.href="https://www.youtube.com/watch?v="+p.id;a.target="_blank";a.rel="noopener noreferrer";a.textContent="▶ VEZI VIDEO PE YOUTUBE";card.append(title,desc,a);grid.append(card)}status.textContent=filtered.length?`${filtered.length} produse cu videoclip`:"Nu am găsit produse cu videoclip.";status.hidden=false}
-async function load(){try{const res=await fetch(CSV_URL+"?v="+Date.now());if(!res.ok)throw Error("HTTP "+res.status);const rows=parseCSV(await res.text());if(rows.length<2)throw Error("CSV gol");const headers=rows[0].map(norm);products=rows.slice(1).map(c=>Object.fromEntries(headers.map((h,i)=>[h,(c[i]||"").trim()]))).filter(r=>active(field(r,["aktiv","active"]))).map(r=>({name:field(r,["ro produs","ro produsul","ro termék","ro termek","produs","denumire","ro denumire"]),desc:field(r,["ro descriere","ro leírás","ro leiras","descriere","descriere produs"]),id:ytId(field(r,["video","videó","youtube","video url"]))})).filter(x=>x.id&&x.name);render()}catch(e){status.textContent="Nu s-au putut încărca videoclipurile. Verifică fișierul prices.csv și coloanele RO / VIDEO.";console.error(e)}}
+const groups=[{id:"promo",title:"🔥 PROMOȚII"},{id:"winter",title:"❄️ TOAMNĂ / IARNĂ"},{id:"summer",title:"☀️ PRIMĂVARĂ / VARĂ"},{id:"other",title:"📦 ALTE PRODUSE"}];
+function categoryOf(r){
+  const raw=norm(field(r,["categorie","categoria","category","kategoria","kategória","categorie ro","tip categorie","season","sezon","sectiune","secțiune","tip","grupa","grup","csoport"]));
+  if(/promo|ofert|reduc|akcio/.test(raw))return "promo";
+  if(/iarna|toamna|winter|autumn|osz|tel/.test(raw))return "winter";
+  if(/vara|primavara|summer|spring|nyar|tavasz/.test(raw))return "summer";
+  return "other";
+}
+function render(){
+ const q=norm(search.value),filtered=products.filter(x=>norm(x.name+" "+x.desc).includes(q));
+ sections.replaceChildren();
+ for(const group of groups){const items=filtered.filter(p=>p.category===group.id);if(!items.length)continue;
+  const section=document.createElement("section");section.className="section";
+  const h=document.createElement("h2");h.textContent=group.title;const count=document.createElement("span");count.className="count";count.textContent=`(${items.length})`;h.append(count);
+  const grid=document.createElement("div");grid.className="grid";
+  for(const p of items){const card=document.createElement("article");card.className="card";const title=document.createElement("h3");title.textContent=p.name;title.style.margin="0";const desc=document.createElement("p");desc.textContent=p.desc;const a=document.createElement("a");a.className="watch";a.href="https://www.youtube.com/watch?v="+p.id;a.target="_blank";a.rel="noopener noreferrer";a.textContent="▶ VEZI VIDEO PE YOUTUBE";card.append(title,desc,a);grid.append(card)}
+  section.append(h,grid);sections.append(section);
+ }
+ status.textContent=filtered.length?`${filtered.length} produse cu videoclip`:(q?"Nu am găsit produse cu videoclip.":"Nu există produse cu videoclip.");
+}
+async function load(){try{const res=await fetch(CSV_URL+"?v="+Date.now());if(!res.ok)throw Error("HTTP "+res.status);const rows=parseCSV(await res.text());if(rows.length<2)throw Error("CSV gol");const headers=rows[0].map(norm);products=rows.slice(1).map(c=>Object.fromEntries(headers.map((h,i)=>[h,(c[i]||"").trim()]))).filter(r=>active(field(r,["aktiv","active"]))).map(r=>({name:field(r,["ro produs","ro produsul","ro termék","ro termek","produs","denumire","ro denumire"]),desc:field(r,["ro descriere","ro leírás","ro leiras","descriere","descriere produs"]),id:ytId(field(r,["video","videó","youtube","video url"])),category:categoryOf(r)})).filter(x=>x.id&&x.name);render()}catch(e){status.textContent="Nu s-au putut încărca videoclipurile. Verifică fișierul prices.csv și coloanele RO / VIDEO.";console.error(e)}}
 search.addEventListener("input",render);load();
 </script></body></html>
