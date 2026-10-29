@@ -63,9 +63,7 @@ function render(){
   }
   card.append(a);grid.append(card)}
   section.append(h,grid);sections.append(section);
- }
- status.textContent=filtered.length?`${filtered.length} produse cu videoclip`:(q?"Nu am găsit produse cu videoclip.":"Nu există produse cu videoclip.");
-}
+
 async function load(){try{const res=await fetch(CSV_URL+"?v="+Date.now());if(!res.ok)throw Error("HTTP "+res.status);const rows=parseCSV(await res.text());if(rows.length<2)throw Error("CSV gol");const headers=rows[0].map(norm);products=rows.slice(1).map(c=>Object.fromEntries(headers.map((h,i)=>[h,(c[i]||"").trim()]))).filter(r=>active(field(r,["aktiv","active"]))).map(r=>({name:field(r,["ro produs","ro produsul","ro termék","ro termek","produs","denumire","ro denumire"]),desc:field(r,["ro descriere","ro leírás","ro leiras","descriere","descriere produs"]),id:ytId(field(r,["video","videó","youtube","video url"])),category:categoryOf(r),kg:field(r,["kg"]),priceBalot:field(r,["preț/balot","pret/balot","preț balot","pret balot"]),priceKg:field(r,["preț/kg","pret/kg","preț kg","pret kg"]),oldPrice:field(r,["régi ár ron","regi ar ron"])})).filter(x=>x.id&&x.name);render()}catch(e){status.textContent="Nu s-au putut încărca videoclipurile. Verifică fișierul prices.csv și coloanele RO / VIDEO.";console.error(e)}}
 document.getElementById("backButton").addEventListener("click",()=>{if(history.length>1){history.back()}else{location.href="https://depozit-hainesecond.ro/"}});search.addEventListener("input",render);load();
 </script></body></html>
