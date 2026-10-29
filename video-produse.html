@@ -16,7 +16,7 @@ nav[aria-label="Navigare principală"] a[aria-current="page"]{color:#d71935;font
 .section{margin-top:27px}.section h2{font-size:23px;margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid #dec68d}.section .count{font-size:14px;color:#777;font-weight:normal;margin-left:8px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
 .card{background:white;border:1px solid #e6e0d5;border-radius:16px;padding:20px;box-shadow:0 4px 16px #0000000a;display:flex;flex-direction:column;gap:12px}
 .card h2{font-size:20px;margin:0}.card p{margin:0;color:#555;line-height:1.5;flex:1}
-.watch{display:inline-block;text-align:center;background:var(--red);color:white;text-decoration:none;border-radius:9px;padding:13px 14px;font-weight:800}
+.price-panel{background:#fff8e9;border:1px solid #ead8b1;border-radius:10px;padding:12px;display:grid;gap:7px}.price-line{display:flex;justify-content:space-between;gap:12px;align-items:baseline;font-size:14px}.price-line strong{font-size:17px;color:#151515}.price-old{text-decoration:line-through;color:#777;font-size:13px}.price-sale{color:#b42318;font-weight:800}.price-line .price-sale{color:#b42318}.watch{display:inline-block;text-align:center;background:var(--red);color:white;text-decoration:none;border-radius:9px;padding:13px 14px;font-weight:800}
 .watch:hover{background:#991812}.notice{padding:15px;background:#fff3d9;border-radius:10px}
 html{scroll-behavior:smooth}.category-nav{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.category-nav a{flex:1 1 220px;text-align:center;background:#fff;border:1px solid #d8a84f;color:#171717;border-radius:11px;padding:14px 10px;font-weight:800;text-decoration:none}.category-nav a:hover,.category-nav a:focus-visible{background:#f6e6c3}.section{scroll-margin-top:20px}footer{margin-top:35px;text-align:center;color:#666;font-size:14px}
 </style></head><body><main>
@@ -43,6 +43,9 @@ function categoryOf(r){
   if(/vara|primavara|summer|spring|nyar|tavasz/.test(raw))return "summer";
   return "other";
 }
+function money(v){const t=String(v??"").trim();return t ? (/\b(?:ron|lei)\b/i.test(t)?t:t+" RON") : ""}
+function numeric(v){const s=String(v??"").replace(/\s/g,"").replace(/[^0-9,.-]/g,"");if(!s)return NaN;const c=s.lastIndexOf(","),d=s.lastIndexOf(".");if(c>=0&&d>=0)return Number(s.replace(c>d?/\./g:/,/g,"").replace(",","."));return Number(s.replace(",","."))}
+function addPriceLine(panel,label,value,cls){if(!String(value??"").trim())return;const line=document.createElement("div");line.className="price-line";const name=document.createElement("span");name.textContent=label;const val=document.createElement("strong");val.textContent=value;if(cls)val.className=cls;line.append(name,val);panel.append(line)}
 function render(){
  const q=norm(search.value),filtered=products.filter(x=>norm(x.name+" "+x.desc).includes(q));
  sections.replaceChildren();
@@ -51,11 +54,23 @@ function render(){
   const section=document.createElement("section");section.className="section";section.id="category-"+group.id;
   const h=document.createElement("h2");h.textContent=group.title;const count=document.createElement("span");count.className="count";count.textContent=`(${items.length})`;h.append(count);
   const grid=document.createElement("div");grid.className="grid";
-  for(const p of items){const card=document.createElement("article");card.className="card";const title=document.createElement("h3");title.textContent=p.name;title.style.margin="0";const desc=document.createElement("p");desc.textContent=p.desc;const a=document.createElement("a");a.className="watch";a.href="https://www.youtube.com/watch?v="+p.id;a.target="_blank";a.rel="noopener noreferrer";a.textContent="▶ VEZI VIDEO PE YOUTUBE";card.append(title,desc,a);grid.append(card)}
+  for(const p of items){const card=document.createElement("article");card.className="card";const title=document.createElement("h3");title.textContent=p.name;title.style.margin="0";const desc=document.createElement("p");desc.textContent=p.desc;const a=document.createElement("a");a.className="watch";a.href="https://www.youtube.com/watch?v="+p.id;a.target="_blank";a.rel="noopener noreferrer";a.textContent="▶ VEZI VIDEO PE YOUTUBE";card.append(title,desc);
+  if(p.priceBalot||p.priceKg||p.kg){const panel=document.createElement("div");panel.className="price-panel";
+    if(p.category==="promo"&&Number.isFinite(numeric(p.oldPrice))&&Number.isFinite(numeric(p.priceBalot))&&numeric(p.oldPrice)>numeric(p.priceBalot)){
+      addPriceLine(panel,"Preț vechi",money(p.oldPrice),"price-old");
+      const reduction=Math.round((numeric(p.oldPrice)-numeric(p.priceBalot))/numeric(p.oldPrice)*100);
+      addPriceLine(panel,"Reducere","−"+reduction+"%","price-sale");
+    }
+    addPriceLine(panel,"Preț/balot",money(p.priceBalot),p.category==="promo"?"price-sale":"");
+    addPriceLine(panel,"Preț/kg",money(p.priceKg));
+    addPriceLine(panel,"Greutate",p.kg?String(p.kg).trim()+( /kg/i.test(p.kg)?"":" kg"):"");
+    card.append(panel);
+  }
+  card.append(a);grid.append(card)}
   section.append(h,grid);sections.append(section);
  }
  status.textContent=filtered.length?`${filtered.length} produse cu videoclip`:(q?"Nu am găsit produse cu videoclip.":"Nu există produse cu videoclip.");
 }
-async function load(){try{const res=await fetch(CSV_URL+"?v="+Date.now());if(!res.ok)throw Error("HTTP "+res.status);const rows=parseCSV(await res.text());if(rows.length<2)throw Error("CSV gol");const headers=rows[0].map(norm);products=rows.slice(1).map(c=>Object.fromEntries(headers.map((h,i)=>[h,(c[i]||"").trim()]))).filter(r=>active(field(r,["aktiv","active"]))).map(r=>({name:field(r,["ro produs","ro produsul","ro termék","ro termek","produs","denumire","ro denumire"]),desc:field(r,["ro descriere","ro leírás","ro leiras","descriere","descriere produs"]),id:ytId(field(r,["video","videó","youtube","video url"])),category:categoryOf(r)})).filter(x=>x.id&&x.name);render()}catch(e){status.textContent="Nu s-au putut încărca videoclipurile. Verifică fișierul prices.csv și coloanele RO / VIDEO.";console.error(e)}}
+async function load(){try{const res=await fetch(CSV_URL+"?v="+Date.now());if(!res.ok)throw Error("HTTP "+res.status);const rows=parseCSV(await res.text());if(rows.length<2)throw Error("CSV gol");const headers=rows[0].map(norm);products=rows.slice(1).map(c=>Object.fromEntries(headers.map((h,i)=>[h,(c[i]||"").trim()]))).filter(r=>active(field(r,["aktiv","active"]))).map(r=>({name:field(r,["ro produs","ro produsul","ro termék","ro termek","produs","denumire","ro denumire"]),desc:field(r,["ro descriere","ro leírás","ro leiras","descriere","descriere produs"]),id:ytId(field(r,["video","videó","youtube","video url"])),category:categoryOf(r),kg:field(r,["kg"]),priceBalot:field(r,["preț/balot","pret/balot","preț balot","pret balot"]),priceKg:field(r,["preț/kg","pret/kg","preț kg","pret kg"]),oldPrice:field(r,["régi ár ron","regi ar ron"])})).filter(x=>x.id&&x.name);render()}catch(e){status.textContent="Nu s-au putut încărca videoclipurile. Verifică fișierul prices.csv și coloanele RO / VIDEO.";console.error(e)}}
 document.getElementById("backButton").addEventListener("click",()=>{if(history.length>1){history.back()}else{location.href="https://depozit-hainesecond.ro/"}});search.addEventListener("input",render);load();
 </script></body></html>
