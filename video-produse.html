@@ -7,7 +7,7 @@
 main{max-width:1160px;margin:auto;padding:22px 18px 50px}
 header{background:linear-gradient(115deg,#111,#3b2a11);color:white;padding:34px 28px;border-radius:20px}
 h1{margin:0;font-size:clamp(26px,4vw,42px)}header p{color:#ead19d;margin-bottom:0}
-nav{margin:22px 0;display:flex;gap:12px;flex-wrap:wrap}nav a{background:#161616;color:#e7ba65;padding:12px 17px;border-radius:10px;text-decoration:none;font-weight:bold}
+nav{margin:22px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}nav a,nav button{background:#161616;color:#e7ba65;padding:12px 17px;border:0;border-radius:10px;text-decoration:none;font-weight:bold;font:inherit;cursor:pointer}nav a:hover,nav button:hover{background:#3b2a11}nav a[aria-current="page"]{background:#c7221b;color:#fff}@media(max-width:600px){nav a,nav button{flex:1 1 44%;text-align:center;padding:12px 8px;font-size:14px}}
 .search{width:100%;padding:15px 16px;border:1px solid #d6d0c4;border-radius:12px;font-size:16px;margin-bottom:18px}
 .section{margin-top:27px}.section h2{font-size:23px;margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid #dec68d}.section .count{font-size:14px;color:#777;font-weight:normal;margin-left:8px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
 .card{background:white;border:1px solid #e6e0d5;border-radius:16px;padding:20px;box-shadow:0 4px 16px #0000000a;display:flex;flex-direction:column;gap:12px}
@@ -17,7 +17,7 @@ nav{margin:22px 0;display:flex;gap:12px;flex-wrap:wrap}nav a{background:#161616;
 footer{margin-top:35px;text-align:center;color:#666;font-size:14px}
 </style></head><body><main>
 <header><h1>🎬 Videoclipuri produse</h1><p>Descoperă articolele disponibile prin videoclipuri reale. Actualizare automată din lista de prețuri.</p></header>
-<nav><a href="/">← Lista de prețuri</a><a href="https://depozit-hainesecond.ro/">Site principal</a></nav>
+<nav aria-label="Navigare principală"><a href="https://depozit-hainesecond.ro/">🏠 Acasă</a><a href="/">📋 Prețuri</a><a href="/video-produse.html" aria-current="page">🎬 Videoclipuri</a><a href="https://depozit-hainesecond.ro/distributie/">🚚 Distribuție</a><a href="https://depozit-hainesecond.ro/contact/">✉️ Contact</a><button type="button" id="backButton">← Înapoi</button></nav>
 <input id="search" class="search" type="search" placeholder="🔎 Caută un produs..." aria-label="Caută un produs">
 <p id="status" class="notice">Se încarcă videoclipurile...</p><div id="sections"></div>
 <footer>UNIQUE TEXTIL · Videoclipurile se deschid pe YouTube.</footer>
@@ -51,5 +51,5 @@ function render(){
  status.textContent=filtered.length?`${filtered.length} produse cu videoclip`:(q?"Nu am găsit produse cu videoclip.":"Nu există produse cu videoclip.");
 }
 async function load(){try{const res=await fetch(CSV_URL+"?v="+Date.now());if(!res.ok)throw Error("HTTP "+res.status);const rows=parseCSV(await res.text());if(rows.length<2)throw Error("CSV gol");const headers=rows[0].map(norm);products=rows.slice(1).map(c=>Object.fromEntries(headers.map((h,i)=>[h,(c[i]||"").trim()]))).filter(r=>active(field(r,["aktiv","active"]))).map(r=>({name:field(r,["ro produs","ro produsul","ro termék","ro termek","produs","denumire","ro denumire"]),desc:field(r,["ro descriere","ro leírás","ro leiras","descriere","descriere produs"]),id:ytId(field(r,["video","videó","youtube","video url"])),category:categoryOf(r)})).filter(x=>x.id&&x.name);render()}catch(e){status.textContent="Nu s-au putut încărca videoclipurile. Verifică fișierul prices.csv și coloanele RO / VIDEO.";console.error(e)}}
-search.addEventListener("input",render);load();
+document.getElementById("backButton").addEventListener("click",()=>{if(history.length>1){history.back()}else{location.href="https://depozit-hainesecond.ro/"}});search.addEventListener("input",render);load();
 </script></body></html>
