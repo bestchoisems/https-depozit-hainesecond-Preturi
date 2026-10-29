@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ro">
 <head>
@@ -131,10 +130,27 @@ td::before{content:attr(data-label);display:block;margin-bottom:4px;color:var(--
   }
 }
 
+
+/* Navigație principală comună cu catalogul video */
+.site-nav{display:flex;flex-wrap:wrap;gap:9px;margin:17px 0 19px}
+.site-nav a,.site-nav button{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:#161616;color:#e7ba65;border:1px solid #b8892f;border-radius:10px;padding:11px 14px;text-decoration:none;font:700 14px Arial,Helvetica,sans-serif;cursor:pointer}
+.site-nav a:hover,.site-nav button:hover{background:#3b2a11}
+.site-nav a[aria-current="page"]{background:#d8a84f;color:#111}
+@media(max-width:600px){.site-nav a,.site-nav button{flex:1 1 130px}}
 </style>
 </head>
 <body>
 <main class="page">
+<nav class="site-nav" aria-label="Meniu principal">
+<a href="https://depozit-hainesecond.ro/">⌂ Acasă</a>
+<a href="https://depozit-hainesecond.ro/promotii/">🔥 Promoții</a>
+<a href="https://preturi.depozit-hainesecond.ro/" aria-current="page">📋 Prețuri</a>
+<a href="https://preturi.depozit-hainesecond.ro/video-produse.html">🎬 Videoclipuri</a>
+<a href="https://depozit-hainesecond.ro/distributie/">🚚 Distribuție</a>
+<a href="https://depozit-hainesecond.ro/contact/">✉ Contact</a>
+<button type="button" id="backNav" onclick="if(history.length>1){history.back()}else{location.href='https://depozit-hainesecond.ro/'}">← Înapoi</button>
+</nav>
+
 <section class="hero">
 <div class="brand"><div><h1 class="brand-title">Listă de prețuri</h1><p class="brand-subtitle">Haine second hand en-gros</p></div><div class="badge">Prețuri actualizate</div></div>
 </section>
