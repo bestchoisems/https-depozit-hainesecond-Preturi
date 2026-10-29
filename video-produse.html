@@ -1,7 +1,52 @@
 <!doctype html>
 <html lang="ro"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Videoclipuri produse – Depozit haine second hand</title>
-<style>
+.video-modal[hidden] { display:none !important; }
+.video-modal {
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:rgba(0,0,0,.88);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.video-dialog {
+  width:min(100%,480px);
+  position:relative;
+}
+.video-close {
+  position:absolute;
+  right:0;
+  top:-48px;
+  background:white;
+  border:0;
+  border-radius:8px;
+  padding:9px 14px;
+  font-size:22px;
+  cursor:pointer;
+}
+.video-frame-wrap {
+  width:100%;
+  aspect-ratio:9/16;
+  max-height:78vh;
+  background:black;
+  border-radius:14px;
+  overflow:hidden;
+}
+.video-frame-wrap iframe {
+  width:100%;
+  height:100%;
+  border:0;
+}
+.video-fallback {
+  text-align:center;
+}
+.video-fallback a {
+  color:white;
+}
+  <style>
 :root{--gold:#d8a84f;--ink:#171717;--red:#c7221b}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7f5f0;color:#222}
 main{max-width:1160px;margin:auto;padding:22px 18px 50px}
@@ -29,7 +74,23 @@ html{scroll-behavior:smooth}.category-nav{display:flex;gap:10px;flex-wrap:wrap;m
 <input id="search" class="search" type="search" placeholder="🔎 Caută un produs..." aria-label="Caută un produs">
 <p id="status" class="notice">Se încarcă videoclipurile...</p><div id="sections"></div>
 <footer>UNIQUE TEXTIL · Videoclipurile se deschid pe YouTube.</footer>
-</main><script>
+</main><div id="videoModal" class="video-modal" hidden>
+  <div class="video-dialog">
+    <button id="closeVideo" class="video-close" type="button" aria-label="Închide">✕</button>
+    <div class="video-frame-wrap">
+      <iframe id="videoFrame"
+        title="Video produs"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <p class="video-fallback">
+      <a id="videoExternal" href="#" target="_blank" rel="noopener noreferrer">
+        Deschide pe YouTube
+      </a>
+    </p>
+  </div>
+</div><script>
 const CSV_URL="prices.csv";
 const sections=document.getElementById("sections"),status=document.getElementById("status"),search=document.getElementById("search");
 let products=[];
@@ -57,7 +118,7 @@ function render(){
   const section=document.createElement("section");section.className="section";section.id="category-"+group.id;
   const h=document.createElement("h2");h.textContent=group.title;const count=document.createElement("span");count.className="count";count.textContent=`(${items.length})`;h.append(count);
   const grid=document.createElement("div");grid.className="grid";
-  for(const p of items){const card=document.createElement("article");card.className="card";const title=document.createElement("h3");title.textContent=p.name;title.style.margin="0";const desc=document.createElement("p");desc.textContent=p.desc;const a=document.createElement("a");a.className="watch";a.href="https://www.youtube.com/watch?v="+p.id;a.target="_blank";a.rel="noopener noreferrer";a.textContent="▶ VEZI VIDEO PE YOUTUBE";card.append(title,desc);
+  for(const p of items){const card=document.createElement("article");card.className="card";const title=document.createElement("h3");title.textContent=p.name;title.style.margin="0";const desc=document.createElement("p");desc.textContent=p.desc;const a=document.createElement("a");a.className="watch";a.href="#"; a.dataset.videoId=p.id; a.addEventListener("click",function(e){   e.preventDefault();   openVideo(p.id); });a.target="_blank";a.rel="noopener noreferrer";a.textContent="▶ VEZI VIDEO PE YOUTUBE";card.append(title,desc);
   if(p.priceBalot&&p.kg){
     const price=document.createElement("div");price.className="price-simple";
     const kg=String(p.kg).trim().replace(/\s*kg\s*$/i,"").trim();
@@ -71,4 +132,30 @@ function render(){
 }
 async function load(){try{const res=await fetch(CSV_URL+"?v="+Date.now());if(!res.ok)throw Error("HTTP "+res.status);const rows=parseCSV(await res.text());if(rows.length<2)throw Error("CSV gol");const headers=rows[0].map(norm);products=rows.slice(1).map(c=>Object.fromEntries(headers.map((h,i)=>[h,(c[i]||"").trim()]))).filter(r=>active(field(r,["aktiv","active"]))).map(r=>({name:field(r,["ro produs","ro produsul","ro termék","ro termek","produs","denumire","ro denumire"]),desc:field(r,["ro descriere","ro leírás","ro leiras","descriere","descriere produs"]),id:ytId(field(r,["video","videó","youtube","video url"])),category:categoryOf(r),kg:field(r,["kg"]),priceBalot:field(r,["preț/balot","pret/balot","preț balot","pret balot"]),priceKg:field(r,["preț/kg","pret/kg","preț kg","pret kg"]),oldPrice:field(r,["régi ár ron","regi ar ron"])})).filter(x=>x.id&&x.name);render()}catch(e){status.textContent="Nu s-au putut încărca videoclipurile. Verifică fișierul prices.csv și coloanele RO / VIDEO.";console.error(e)}}
 document.getElementById("backButton").addEventListener("click",()=>{if(history.length>1){history.back()}else{location.href="https://depozit-hainesecond.ro/"}});search.addEventListener("input",render);load();
-</script></body></html>
+const videoModal=document.getElementById("videoModal");
+const videoFrame=document.getElementById("videoFrame");
+const videoExternal=document.getElementById("videoExternal");
+const closeVideoButton=document.getElementById("closeVideo");
+
+function openVideo(id){
+  videoExternal.href="https://www.youtube.com/watch?v="+id;
+  videoFrame.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&playsinline=1&rel=0";
+  videoModal.hidden=false;
+  document.body.style.overflow="hidden";
+}
+
+function closeVideo(){
+  videoModal.hidden=true;
+  videoFrame.removeAttribute("src");
+  document.body.style.overflow="";
+}
+
+closeVideoButton.addEventListener("click",closeVideo);
+
+videoModal.addEventListener("click",function(e){
+  if(e.target===videoModal)closeVideo();
+});
+
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&!videoModal.hidden)closeVideo();
+});</script></body></html>
